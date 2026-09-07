@@ -11,6 +11,7 @@ class CustomUserAdmin(UserAdmin):
         'first_name',
         'last_name',
         'role',
+        'public_id',
         'phone_number',
         'email',
     ]
