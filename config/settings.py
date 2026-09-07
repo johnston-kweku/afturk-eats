@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-d+++ig^-67*)g1lqk_f#z-ounm1)ie%wmqj+%tpzbulx7s-7xa
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'accounts',
+    'customer',
+    'rider',
+    'order',
+    'vendor'
 ]
 
 MIDDLEWARE = [
@@ -98,6 +103,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'accounts.user'
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/

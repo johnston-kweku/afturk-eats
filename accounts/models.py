@@ -10,11 +10,14 @@ class User(AbstractUser):
         RIDER = 'RIDER', 'Rider'
         VENDOR = 'VENDOR', 'Vendor'
         CUSTOMER = 'CUSTOMER', 'Customer'
+        ADMIN = 'ADMIN', 'Admin'
 
-    full_name = models.CharField(max_length=200, blank=False)
-    role = models.CharField(max_length=50, choices=Role.choices)
-    phone_number = models.CharField(max_length=15)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    role = models.CharField(max_length=20, choices=Role.choices)
+    phone_number = models.CharField(max_length=15, unique=True)
     email = models.EmailField(unique=True, null=True, blank=True)
-    
+    date_of_birth = models.DateField(null=True, blank=True)
+
 
 
