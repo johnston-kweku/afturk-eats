@@ -1,13 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.conf import settings
+from django.utils import timezone
+from datetime import timedelta
 import random
 import string
+import uuid
+
+
 
 
 # Create your models here.
 
 class User(AbstractUser):
-    # username, password inherited as-is — used for login
 
     class Role(models.TextChoices):
         RIDER = 'RIDER', 'Rider'
@@ -30,6 +35,18 @@ class User(AbstractUser):
         Role.ADMIN: "ADM",
     }
 
+    def is_admin(self):
+        return self.role == self.Role.ADMIN
+
+    def is_rider(self):
+        return self.role == self.Role.RIDER
+
+    def is_vendor(self):
+        return self.role == self.Role.VENDOR
+
+    def is_customer(self):
+        return self.role == self.Role.CUSTOMER
+
     def save(self, *args, **kwargs):
         if not self.public_id:
             prefix = self.ROLE_PREFIX.get(self.role, "USR")
@@ -40,3 +57,20 @@ class User(AbstractUser):
                     self.public_id = candidate
                     break
         super().save(*args, **kwargs)
+
+
+def default_expiry():
+    return timezone.now() + timedelta(hours=48)
+
+
+
+class Invitation(models.Model):
+    token = models.UUIDField(unique=True, default=uuid.uuid4())
+    role = models.CharField(max_length=20, choices=User.Role.choices)
+    is_used = models.BooleanField(default=False)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(default=default_expiry)
+
+    def is_valid(self):
+        return not self.is_used and self.expires_at > timezone.now()
