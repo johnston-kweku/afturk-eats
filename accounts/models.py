@@ -56,6 +56,8 @@ class User(AbstractUser):
                 if not User.objects.filter(public_id=candidate).exists():
                     self.public_id = candidate
                     break
+        self.email = self.email.strip() or None if self.email else None
+
         super().save(*args, **kwargs)
 
 

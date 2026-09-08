@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from .decorators import role_required
 from .models import Invitation, User
 from .helpers import create_token
 import json
@@ -10,7 +11,7 @@ import json
 # Create your views here.
 
 
-@login_required
+@role_required('ADMIN')
 def generate_invite_link(request):
     try:
         data = json.loads(request.body)
@@ -24,7 +25,7 @@ def generate_invite_link(request):
     if not role:
         return JsonResponse({
             'success': False,
-            'message': 'Please provide a role'
+            'message': 'Please provide a role.'
         }, status=400)
 
     if role not in User.Role.values:

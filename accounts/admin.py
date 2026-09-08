@@ -79,3 +79,7 @@ class InvitationAdmin(admin.ModelAdmin):
         'created_by', 'role', 'created_at'
     ]
 
+    list_filter = [
+        'role'
+    ]
+
