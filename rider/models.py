@@ -26,5 +26,7 @@ class RiderProfile(models.Model):
     ghana_card_image = models.ImageField(upload_to='riders/ghana_cards/')
     is_student = models.BooleanField(default=False)
     student_id_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    is_online = models.BooleanField(default=False)
+    last_seen_at = models.DateTimeField(null=True, blank=True)
 
 

@@ -1,3 +1,43 @@
 from django.shortcuts import render
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from .models import Invitation, User
+from .helpers import create_token
+import json
 
 # Create your views here.
+
+
+@login_required
+def generate_invite_link(request):
+    try:
+        data = json.load(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'message': 'Invalid JSON structure.'
+        }, status=400)
+
+    role = data.get('role', '')
+    if not role:
+        return JsonResponse({
+            'success': False,
+            'message': 'Please provide a role'
+        })
+
+    if role not in User.Role.values:
+        return JsonResponse({
+            'success': False,
+            'message': 'Invalid role.'
+        })
+
+    invitation = create_token(request.user, role)
+
+    invitation_link = request.build_absolute_uri(f'/register/?token={invitation.token}')
+
+    return JsonResponse({
+        'success': True,
+        'message': 'Invitation link generated successfully.',
+        'invitation_link': invitation_link
+    })
