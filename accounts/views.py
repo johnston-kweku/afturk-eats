@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from .models import Invitation, User
 from .helpers import create_token
@@ -12,7 +13,7 @@ import json
 @login_required
 def generate_invite_link(request):
     try:
-        data = json.load(request.body)
+        data = json.loads(request.body)
     except json.JSONDecodeError:
         return JsonResponse({
             'success': False,
@@ -24,13 +25,13 @@ def generate_invite_link(request):
         return JsonResponse({
             'success': False,
             'message': 'Please provide a role'
-        })
+        }, status=400)
 
     if role not in User.Role.values:
         return JsonResponse({
             'success': False,
             'message': 'Invalid role.'
-        })
+        }, status=400)
 
     invitation = create_token(request.user, role)
 

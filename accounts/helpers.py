@@ -7,3 +7,7 @@ def create_token(created_by, role):
         created_by=created_by
     )
     return invitation
+
+
+def validate_ghana_card(number):
+    pass
