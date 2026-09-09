@@ -25,7 +25,6 @@ class User(AbstractUser):
     role = models.CharField(max_length=20, choices=Role.choices)
     phone_number = models.CharField(max_length=15, unique=True)  # mandatory
     email = models.EmailField(unique=True, null=True, blank=True)  # optional
-    date_of_birth = models.DateField(null=True, blank=True)
     public_id = models.CharField(max_length=12, unique=True, editable=False, blank=True)
 
     ROLE_PREFIX = {

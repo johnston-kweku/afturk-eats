@@ -1,5 +1,5 @@
 from .models import Invitation
-
+import re
 
 def create_token(created_by, role):
     invitation = Invitation.objects.create(
@@ -10,4 +10,7 @@ def create_token(created_by, role):
 
 
 def validate_ghana_card(number):
-    pass
+    pattern = r'^GHA-[0-9]{9}-[0-9]'
+    if re.match(pattern, number):
+        return True
+    return False
