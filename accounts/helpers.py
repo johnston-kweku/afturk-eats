@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.urls import reverse
 from .models import Invitation, User
 from customer.models import CustomerProfile
 import re
@@ -33,4 +34,14 @@ def _handle_customer_sign_up(username, password, first_name, last_name, phone_nu
     return user
 
 
+def get_dashboard_url(user):
+    if user.role == User.Role.CUSTOMER:
+        return reverse('customer:customer_dashboard')
 
+    if user.role == User.Role.RIDER:
+        return reverse('rider:rider_dashboard')
+
+    if user.role == User.Role.VENDOR:
+        return reverse('vendor:vendor_dashboard')
+
+    return reverse('accounts:home')

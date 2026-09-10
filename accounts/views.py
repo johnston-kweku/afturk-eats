@@ -7,7 +7,7 @@ from django.db import transaction
 from django.contrib import messages
 from .decorators import role_required
 from .models import Invitation, User
-from .helpers import create_token
+from .helpers import create_token, _handle_customer_sign_up, get_dashboard_url
 import json
 
 # Create your views here.
@@ -101,12 +101,75 @@ def logout_view(request):
 
 
 def user_registration(request):
+
+    customer_template_path = 'register/customer_registration.html'
+    rider_template_path = 'register/rider_registration.html'
+    vendor_template_path = 'register/vendor_registration.html'
+
     if request.method == 'GET':
         token = request.GET.get('token', '')
         invitation = get_object_or_404(Invitation, token=token)
         if not token:
-            return render(request, 'register/customer_registration.html')
+            return render(request, customer_template_path)
 
-        if not invitation:
-            return 
 
+        if not invitation.is_valid():
+            return redirect('accounts:invalid_invite')
+
+        context = {'token', token}
+        registration_role = invitation.role
+        if registration_role == User.Role.RIDER:
+            return render(request, rider_template_path, context)
+
+        if registration_role == User.Role.VENDOR:
+            return render(request, vendor_template_path, context)
+
+    if request.method == 'POST':
+        token = request.POST.get('token', '')
+        invitation = get_object_or_404(Invitation, token=token)
+
+        if not invitation.is_valid():
+            return redirect('accounts:invalid_invite')
+
+        registration_role = invitation.role if token else User.Role.CUSTOMER
+        username = request.POST.get('username', '').strip()
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        phone_number = request.POST.get('phone_number', '').strip()
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '')
+        confirm_password = request.POST.get('confirm_password', '')
+
+        errors = {}
+        if not username: errors['username'] = 'Username is required'
+        if not first_name: errors['first_name'] = 'First name is required'
+        if not last_name: errors['last_name'] = 'Last name is required'
+        if not phone_number: errors['phone_number'] = 'Phone number is required for verification'
+        if not password: errors['password'] = 'Password is required'
+        if not confirm_password: errors['confirm_password'] = 'Enter password again for confirmation'
+
+        if password and confirm_password and password != confirm_password:
+            errors['password'] = 'Passwords do not match'
+
+        if errors:
+            template_mapping = {
+                User.Role.CUSTOMER: customer_template_path,
+                User.Role.RIDER: rider_template_path,
+                User.Role.VENDOR: vendor_template_path
+            }
+            return render(request, template_mapping[registration_role])
+
+
+        if registration_role == User.Role.CUSTOMER:
+            with transaction.atomic():
+                user = _handle_customer_sign_up(
+                    username=username,
+                    first_name=first_name,
+                    last_name=last_name,
+                    password=password,
+                    email=email,
+                    phone_number=phone_number,
+                )
+
+                login(request, user)
+                return redirect(get_dashboard_url(user))
