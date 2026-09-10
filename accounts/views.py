@@ -100,5 +100,13 @@ def logout_view(request):
 
 
 
+def user_registration(request):
+    if request.method == 'GET':
+        token = request.GET.get('token', '')
+        invitation = get_object_or_404(Invitation, token=token)
+        if not token:
+            return render(request, 'register/customer_registration.html')
 
+        if not invitation:
+            return 
 
