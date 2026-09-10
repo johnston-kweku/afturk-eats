@@ -11,6 +11,7 @@ class RiderProfile(models.Model):
         BICYCLE = 'BICYCLE', 'Bicycle'
         CAR = 'CAR', 'Car'
 
+
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -19,7 +20,7 @@ class RiderProfile(models.Model):
 
 
     profile_image = models.ImageField(upload_to='riders/profile/')
-    date_of_birth = models.DateField(null=True)
+    date_of_birth = models.DateField()
     rented_vehicle = models.BooleanField(default=False)
     is_approved = models.BooleanField(default=False)
     vehicle_type = models.CharField(max_length=20, choices=Vehicle.choices)

@@ -1,6 +1,7 @@
 from django.db import transaction
 from django.urls import reverse
 from .models import Invitation, User
+from rider.models import RiderProfile
 from customer.models import CustomerProfile
 import re
 
@@ -32,6 +33,46 @@ def _handle_customer_sign_up(username, password, first_name, last_name, phone_nu
         )
         customer_profile = CustomerProfile.objects.create(user=user)
     return user
+
+
+def _handle_rider_sign_up(
+        username, 
+        password, 
+        first_name, 
+        last_name, 
+        phone_number, 
+        profile_image, 
+        ghana_card_image,
+        ghana_card_number,
+        is_student,
+        vehicle_type,
+        date_of_birth,
+        rented_vehicle,
+        student_id_number=None,
+        email=None
+                          ):
+    with transaction.atomic():
+        user = User.objects.create_user(
+            username=username,
+            password=password,
+            first_name=first_name,
+            last_name=last_name,
+            phone_number=phone_number,
+            email=email,
+            role=User.Role.RIDER
+        )
+        rider_profile = RiderProfile.objects.create(
+            profile_image=profile_image,
+            ghana_card_image=ghana_card_image,
+            ghana_card_number=ghana_card_number,
+            is_student=is_student,
+            student_id_number=student_id_number,
+            vehicle_type=vehicle_type,
+            date_of_birth=date_of_birth,
+            rented_vehicle=rented_vehicle
+        )
+
+    return user, rider_profile
 
 
 def get_dashboard_url(user):

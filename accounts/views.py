@@ -7,7 +7,13 @@ from django.db import transaction
 from django.contrib import messages
 from .decorators import role_required
 from .models import Invitation, User
-from .helpers import create_token, _handle_customer_sign_up, get_dashboard_url
+from .helpers import (
+    create_token, 
+    _handle_customer_sign_up, 
+    get_dashboard_url, 
+    _handle_rider_sign_up, 
+    validate_ghana_card
+)
 import json
 
 # Create your views here.
@@ -144,7 +150,7 @@ def user_registration(request):
         if not username: errors['username'] = 'Username is required'
         if not first_name: errors['first_name'] = 'First name is required'
         if not last_name: errors['last_name'] = 'Last name is required'
-        if not phone_number: errors['phone_number'] = 'Phone number is required for verification'
+        if not phone_number: errors['phone_number'] = 'Phone number is required for verification and payouts'
         if not password: errors['password'] = 'Password is required'
         if not confirm_password: errors['confirm_password'] = 'Enter password again for confirmation'
 
@@ -157,19 +163,64 @@ def user_registration(request):
                 User.Role.RIDER: rider_template_path,
                 User.Role.VENDOR: vendor_template_path
             }
-            return render(request, template_mapping[registration_role])
 
+            return render(request, template_mapping[registration_role], {
+                'errors': errors,
+                'token': token,
+                'data': request.POST
+            })
 
         if registration_role == User.Role.CUSTOMER:
-            with transaction.atomic():
-                user = _handle_customer_sign_up(
-                    username=username,
-                    first_name=first_name,
-                    last_name=last_name,
-                    password=password,
-                    email=email,
-                    phone_number=phone_number,
-                )
+            user = _handle_customer_sign_up(
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                password=password,
+                email=email,
+                phone_number=phone_number,
+            )
 
-                login(request, user)
-                return redirect(get_dashboard_url(user))
+            login(request, user)
+            return redirect(get_dashboard_url(user))
+
+        if registration_role == User.Role.RIDER:
+            ghana_card_number = request.POST.get('ghana_card_number', '')
+            ghana_card_image = request.POST.get('ghana_card_image', '')
+            profile_image = request.POST.get('profile_image', '')
+            student_id_number = request.POST.get('student_id_number', '')
+            is_student = request.POST.get('is_student', False) == 'on'
+            vehicle_type = request.POST.get('vehicle_type', '')
+            date_of_birth = request.POST.get('date_of_birth', '')
+
+            ghana_card_number_is_valid = validate_ghana_card(ghana_card_number)
+            if not ghana_card_number_is_valid: errors['ghana_card_number'] = 'Invalid Ghana Card Number format'
+            if not ghana_card_image: errors['ghana_card_image'] = 'Image of Ghana card is required for verification'
+            if not profile_image: errors['profile_image'] = 'Selfie of yourself is required for verification'
+            if is_student and not student_id_number: errors['student_id_number']
+            if not vehicle_type: errors['vehicle_type'] = 'Please select type of vehicle'
+            if not date_of_birth: errors['date_of_birth'] = 'Date of birth is required'
+
+
+            if errors:
+                template_mapping = {
+                    User.Role.CUSTOMER: customer_template_path,
+                    User.Role.RIDER: rider_template_path,
+                    User.Role.VENDOR: vendor_template_path
+                }
+    
+                return render(request, template_mapping[registration_role], {
+                    'errors': errors,
+                    'token': token,
+                    'data': request.POST
+                })
+
+            user, rider_profile = _handle_rider_sign_up(
+                username=username,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                phone_number=phone_number
+            )
+
+    
