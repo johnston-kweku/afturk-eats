@@ -114,15 +114,15 @@ def user_registration(request):
 
     if request.method == 'GET':
         token = request.GET.get('token', '')
-        invitation = get_object_or_404(Invitation, token=token)
         if not token:
             return render(request, customer_template_path)
 
+        invitation = get_object_or_404(Invitation, token=token)
 
         if not invitation.is_valid():
             return redirect('accounts:invalid_invite')
 
-        context = {'token', token}
+        context = {'token': token}
         registration_role = invitation.role
         if registration_role == User.Role.RIDER:
             return render(request, rider_template_path, context)
@@ -132,10 +132,11 @@ def user_registration(request):
 
     if request.method == 'POST':
         token = request.POST.get('token', '')
-        invitation = get_object_or_404(Invitation, token=token)
+        if token:
+            invitation = get_object_or_404(Invitation, token=token)
 
-        if not invitation.is_valid():
-            return redirect('accounts:invalid_invite')
+            if not invitation.is_valid():
+                return redirect('accounts:invalid_invite')
 
         registration_role = invitation.role if token else User.Role.CUSTOMER
         username = request.POST.get('username', '').strip()
@@ -185,8 +186,8 @@ def user_registration(request):
 
         if registration_role == User.Role.RIDER:
             ghana_card_number = request.POST.get('ghana_card_number', '')
-            ghana_card_image = request.POST.get('ghana_card_image', '')
-            profile_image = request.POST.get('profile_image', '')
+            ghana_card_image = request.FILES.get('ghana_card_image', '')
+            profile_image = request.FILES.get('profile_image', '')
             student_id_number = request.POST.get('student_id_number', '')
             is_student = request.POST.get('is_student', False) == 'on'
             vehicle_type = request.POST.get('vehicle_type', '')
@@ -196,7 +197,7 @@ def user_registration(request):
             if not ghana_card_number_is_valid: errors['ghana_card_number'] = 'Invalid Ghana Card Number format'
             if not ghana_card_image: errors['ghana_card_image'] = 'Image of Ghana card is required for verification'
             if not profile_image: errors['profile_image'] = 'Selfie of yourself is required for verification'
-            if is_student and not student_id_number: errors['student_id_number']
+            if is_student and not student_id_number: errors['student_id_number'] = 'Student ID is required for riders who are also students.'
             if not vehicle_type: errors['vehicle_type'] = 'Please select type of vehicle'
             if not date_of_birth: errors['date_of_birth'] = 'Date of birth is required'
 

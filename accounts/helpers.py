@@ -62,6 +62,7 @@ def _handle_rider_sign_up(
             role=User.Role.RIDER
         )
         rider_profile = RiderProfile.objects.create(
+            user=user,
             profile_image=profile_image,
             ghana_card_image=ghana_card_image,
             ghana_card_number=ghana_card_number,
