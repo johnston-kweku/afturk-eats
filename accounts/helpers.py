@@ -3,6 +3,7 @@ from django.urls import reverse
 from .models import Invitation, User
 from rider.models import RiderProfile
 from customer.models import CustomerProfile
+from vendor.models import VendorProfile
 import re
 
 def create_token(created_by, role):
@@ -59,7 +60,8 @@ def _handle_rider_sign_up(
             last_name=last_name,
             phone_number=phone_number,
             email=email,
-            role=User.Role.RIDER
+            role=User.Role.RIDER,
+            is_active=False
         )
         rider_profile = RiderProfile.objects.create(
             user=user,
@@ -75,6 +77,44 @@ def _handle_rider_sign_up(
 
     return user, rider_profile
 
+
+def _handle_vendor_sign_up(
+        username,
+        password, 
+        first_name, 
+        last_name, 
+        phone_number, 
+        profile_image, 
+        ghana_card_image,
+        ghana_card_number,
+        business_name,
+        category,
+        date_of_birth,
+        email=None
+        ):
+    with transaction.atomic():
+        user = User.objects.create_user(
+            username=username,
+            password=password,
+            first_name=first_name,
+            last_name=last_name,
+            phone_number=phone_number,
+            role=User.Role.VENDOR,
+            email=email,
+            is_active=False
+        )
+
+        vendor_profile = VendorProfile.objects.create(
+            user=user,
+            profile_image=profile_image,
+            ghana_card_number=ghana_card_number,
+            ghana_card_image=ghana_card_image,
+            business_name=business_name,
+            category=category,
+            date_of_birth=date_of_birth,
+        )
+
+    return user, vendor_profile
 
 def get_dashboard_url(user):
     if user.role == User.Role.CUSTOMER:

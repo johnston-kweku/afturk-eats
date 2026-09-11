@@ -12,6 +12,7 @@ from .helpers import (
     _handle_customer_sign_up, 
     get_dashboard_url, 
     _handle_rider_sign_up, 
+    _handle_vendor_sign_up,
     validate_ghana_card
 )
 import json
@@ -57,7 +58,8 @@ def generate_invite_link(request):
         'invitation_link': invitation_link
     })
 
-
+def invalid_invite(request):
+    return render(request, 'errors/invalid_invite.html')
 
 
 def login_view(request):
@@ -112,6 +114,11 @@ def user_registration(request):
     rider_template_path = 'register/rider_registration.html'
     vendor_template_path = 'register/vendor_registration.html'
 
+    template_mapping = {
+        User.Role.CUSTOMER: customer_template_path,
+        User.Role.RIDER: rider_template_path,
+        User.Role.VENDOR: vendor_template_path
+    }
     if request.method == 'GET':
         token = request.GET.get('token', '')
         if not token:
@@ -124,11 +131,7 @@ def user_registration(request):
 
         context = {'token': token}
         registration_role = invitation.role
-        if registration_role == User.Role.RIDER:
-            return render(request, rider_template_path, context)
-
-        if registration_role == User.Role.VENDOR:
-            return render(request, vendor_template_path, context)
+        return render(request, template_mapping[registration_role], context)
 
     if request.method == 'POST':
         token = request.POST.get('token', '')
@@ -159,12 +162,6 @@ def user_registration(request):
             errors['password'] = 'Passwords do not match'
 
         if errors:
-            template_mapping = {
-                User.Role.CUSTOMER: customer_template_path,
-                User.Role.RIDER: rider_template_path,
-                User.Role.VENDOR: vendor_template_path
-            }
-
             return render(request, template_mapping[registration_role], {
                 'errors': errors,
                 'token': token,
@@ -184,6 +181,7 @@ def user_registration(request):
             login(request, user)
             return redirect(get_dashboard_url(user))
 
+
         if registration_role == User.Role.RIDER:
             ghana_card_number = request.POST.get('ghana_card_number', '')
             ghana_card_image = request.FILES.get('ghana_card_image', '')
@@ -192,8 +190,12 @@ def user_registration(request):
             is_student = request.POST.get('is_student', False) == 'on'
             vehicle_type = request.POST.get('vehicle_type', '')
             date_of_birth = request.POST.get('date_of_birth', '')
+            rented_vehicle = False
+            if vehicle_type == 'REQUEST RENT':
+                rented_vehicle = True
 
             ghana_card_number_is_valid = validate_ghana_card(ghana_card_number)
+
             if not ghana_card_number_is_valid: errors['ghana_card_number'] = 'Invalid Ghana Card Number format'
             if not ghana_card_image: errors['ghana_card_image'] = 'Image of Ghana card is required for verification'
             if not profile_image: errors['profile_image'] = 'Selfie of yourself is required for verification'
@@ -203,12 +205,6 @@ def user_registration(request):
 
 
             if errors:
-                template_mapping = {
-                    User.Role.CUSTOMER: customer_template_path,
-                    User.Role.RIDER: rider_template_path,
-                    User.Role.VENDOR: vendor_template_path
-                }
-    
                 return render(request, template_mapping[registration_role], {
                     'errors': errors,
                     'token': token,
@@ -221,7 +217,61 @@ def user_registration(request):
                 first_name=first_name,
                 last_name=last_name,
                 email=email,
-                phone_number=phone_number
+                phone_number=phone_number,
+                ghana_card_image=ghana_card_image,
+                ghana_card_number=ghana_card_number,
+                date_of_birth=date_of_birth,
+                vehicle_type=vehicle_type,
+                is_student=is_student,
+                student_id_number=student_id_number,
+                rented_vehicle=rented_vehicle if rented_vehicle else False
             )
 
-    
+            return redirect('accounts:pending_approval')
+
+        if registration_role == User.Role.VENDOR:
+            ghana_card_number = request.POST.get('ghana_card_number', '')
+            ghana_card_image = request.FILES.get('ghana_card_image', '')
+            business_name = request.POST.get('business_name', '').strip()
+            profile_image = request.FILES.get('profile_image', '')
+            category = request.POST.get('category', '')
+            date_of_birth = request.POST.get('date_of_birth', '')
+
+            ghana_card_number_is_valid = validate_ghana_card(ghana_card_number)
+
+            if not ghana_card_number_is_valid: errors['ghana_card_number'] = 'Invalid Ghana Card Number format.'
+            if not business_name: errors['business_name'] = 'Business name is required.'
+            if not profile_image: errors['profile_image'] = 'Selfie of yourself is required for verification.'
+            if not category: errors['category'] = 'Please select at least one category'
+            if not date_of_birth: errors['date_of_birth'] = 'Date of birth is required.'
+            if not ghana_card_image: errors['ghana_card_image'] = 'Image of Ghana Card is required for verification.'
+
+
+            if errors:
+                return render(request, template_mapping[registration_role], {
+                    'errors': errors,
+                    'token': token,
+                    'data': request.POST
+                })
+
+            user, vendor_profile = _handle_vendor_sign_up(
+                username=username,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                phone_number=phone_number,
+                business_name=business_name,
+                category=category,
+                date_of_birth=date_of_birth,
+                ghana_card_image=ghana_card_image,
+                ghana_card_number=ghana_card_number,
+                profile_image=profile_image
+            )
+
+            return redirect('accounts:pending_approval')
+        
+
+
+def pending_approval(request):
+    return render(request, 'register/pending_approval.html')

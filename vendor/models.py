@@ -14,5 +14,6 @@ class VendorProfile(models.Model):
     is_approved = models.BooleanField(default=False)
     ghana_card_number = models.CharField(max_length=15, unique=True)
     ghana_card_image = models.ImageField(upload_to='vendor/ghana_cards/')
+    date_of_birth = models.DateField()
     profile_image = models.ImageField(upload_to='vendor/profile/')
     category = models.ManyToManyField(Category, related_name='vendor')
