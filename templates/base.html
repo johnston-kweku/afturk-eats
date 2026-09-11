@@ -1,0 +1,15 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>afturk-eats</title>
+    <link rel="stylesheet" href="{% static 'src/css/style.css' %}">
+</head>
+<body class="bg-linear-to-b from-cyprus-800 to-cyprus-600 flex items-center justify-center min-h-screen">
+    {% include '_desktop_nav_bar.html' %}
+    {% include '_mobile_nav_bar.html' %}
+    {% block content %}{% endblock content %}
+</body>
+</html>

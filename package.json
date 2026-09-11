@@ -1,5 +1,11 @@
 {
+  "scripts": {
+    "dev": "tailwindcss -i ./static/src/css/input.css -o ./static/src/css/style.css --watch",
+    "build": "tailwindcss -i ./static/src/css/input.css -o ./static/src/css/style.css --minify"
+  },
   "dependencies": {
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/sora": "^5.3.0",
     "@tailwindcss/cli": "^4.3.3",
     "tailwindcss": "^4.3.3"
   }
