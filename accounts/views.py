@@ -64,7 +64,7 @@ def invalid_invite(request):
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect('accounts:dashboard')  
+        return redirect('accounts:home')  
 
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
@@ -88,15 +88,15 @@ def login_view(request):
 
         # Role-based redirect
         if user.role == user.Role.RIDER:
-            return redirect('rider:dashboard')
+            return redirect(get_dashboard_url(user))
         elif user.role == user.Role.VENDOR:
-            return redirect('vendor:dashboard')
+            return redirect(get_dashboard_url(user))
         elif user.role == user.Role.CUSTOMER:
-            return redirect('customer:home')
+            return redirect(get_dashboard_url(user))
         elif user.role == user.Role.ADMIN:
-            return redirect('admin:index')
+            return redirect(get_dashboard_url(user))
 
-        return redirect('accounts:dashboard')  # fallback
+        return redirect('accounts:home')  # fallback
 
     return render(request, 'accounts/login.html', {'username': ''})
 

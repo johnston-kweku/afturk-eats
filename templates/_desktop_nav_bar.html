@@ -1,10 +1,17 @@
 {% block content %}
-    <nav class="md:w-9/12 rounded-full py-2 px-6 border-2 shadow-2xl border-sand-200 flex items-center justify-between bg-white/20 backdrop-blur-md fixed top-8 mx-auto">
+    <nav class="hidden md:flex fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-white/10 border-2 border-white/10 backdrop-blur-md md:w-9/12 justify-between items-center gap-1 px-3 py-2 rounded-full">
         <div class="flex items-center">
-            <p class="text-white font-bold  font-sans text-base">afturk</p><span class="text-white/20 font-bold">eats</span>
+            <p class="text-sand-100 font-bold  font-sans text-base">afturk</p><span class="text-white/20 font-bold">eats</span>
         </div>
-        <button class="text-sand-300 font-bold px-3 py-2 text-sm cursor-pointer active:scale-95 transition-all diration-300 {% if request.resolver_match.url_name == 'home' %} bg-white border border-white rounded-3xl{% endif %}">
-            Home
-        </button>
+        <div class="flex items-center justify-center">
+            <button onclick="window.location.href=`{% url 'accounts:home' %}`" class="font-light px-3 py-2 text-xs cursor-pointer active:scale-95 transition-all diration-500 rounded-3xl {% if request.resolver_match.url_name == 'home' %} bg-sand-100 border border-white text-cyprus-700{% else %}text-sand-100 bg-none hover:bg-sand-50 hover:text-cyprus-700 {% endif %}">
+                Home
+            </button>
+        </div>
+        <div>
+            <button onclick="window.location.href=`{% url 'accounts:login' %}`" class="font-light px-3 py-2 text-xs cursor-pointer active:scale-95 transition-all duration-500 rounded-3xl {% if request.resolver_match.url_name == 'login' %}text-cyprus-700 bg-sand-100 border-white {% else %} text-sand-100 bg-none hover:bg-sand-50 hover:text-cyprus-700 {% endif %}">
+                Login
+            </button>
+        </div>
     </nav>
 {% endblock content %}
