@@ -13,6 +13,7 @@ from .helpers import (
     get_dashboard_url, 
     _handle_rider_sign_up, 
     _handle_vendor_sign_up,
+    _handle_admin_sign_up,
     validate_ghana_card
 )
 import json
@@ -115,11 +116,13 @@ def user_registration(request):
     customer_template_path = 'register/customer_registration.html'
     rider_template_path = 'register/rider_registration.html'
     vendor_template_path = 'register/vendor_registration.html'
+    admin_registration = 'register/admin_registration.html'
 
     template_mapping = {
         User.Role.CUSTOMER: customer_template_path,
         User.Role.RIDER: rider_template_path,
-        User.Role.VENDOR: vendor_template_path
+        User.Role.VENDOR: vendor_template_path,
+        User.Role.ADMIN: admin_registration
     }
     if request.method == 'GET':
         token = request.GET.get('token', '')
@@ -228,7 +231,9 @@ def user_registration(request):
                 student_id_number=student_id_number,
                 rented_vehicle=rented_vehicle if rented_vehicle else False
             )
-
+            invitation.is_used = True
+            invitation.used_by = user
+            invitation.save()
             return redirect('accounts:pending_approval')
 
         if registration_role == User.Role.VENDOR:
@@ -270,8 +275,26 @@ def user_registration(request):
                 ghana_card_number=ghana_card_number,
                 profile_image=profile_image
             )
+            invitation.is_used = True
+            invitation.used_by = user
+            invitation.save()
 
             return redirect('accounts:pending_approval')
+
+        if registration_role == User.Role.ADMIN:
+            user = _handle_admin_sign_up(
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                phone_number=phone_number,
+                email=email,
+                password=password
+            )
+            invitation.is_used = True
+            invitation.used_by = user
+            invitation.save()
+            login(request, user)
+            return redirect(get_dashboard_url(user))
         
 
 

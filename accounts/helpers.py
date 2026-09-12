@@ -116,6 +116,35 @@ def _handle_vendor_sign_up(
 
     return user, vendor_profile
 
+
+def _handle_admin_sign_up(
+    username,
+    first_name,
+    last_name,
+    phone_number,
+    email,
+    password,
+        ):
+    """
+    Creates an admin User account from a valid ADMIN-role Invitation.
+    No profile model — the invite itself (issued by an existing admin)
+    is the approval, so the account is active immediately.
+    """
+    with transaction.atomic():
+        user = User.objects.create_user(
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+            phone_number=phone_number,
+            email=email,
+            password=password,
+            role=User.Role.ADMIN,
+            is_active=True,
+        )
+    return user
+
+
+
 def get_dashboard_url(user):
     if user.role == User.Role.CUSTOMER:
         return reverse('customer:customer_dashboard')
@@ -125,5 +154,8 @@ def get_dashboard_url(user):
 
     if user.role == User.Role.VENDOR:
         return reverse('vendor:vendor_dashboard')
+
+    if user.role == User.Role.ADMIN:
+        return reverse('console:admin_dashboard')
 
     return reverse('accounts:home')
