@@ -1,4 +1,4 @@
-<nav class="md:hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1 justify-between px-3 py-2 rounded-full border-2 bg-white/10 w-11/12 border-white/10 backdrop-blur-md">
+<nav class="md:hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1 justify-between px-3 py-2 rounded-full border-2 bg-white/10 w-fit border-white/10 backdrop-blur-md">
 
     <a href="{% url 'accounts:home' %}" class="flex flex-col items-center active:scale-95 justify-center px-2 py-1 rounded-full transition-all duration-500 {% if request.resolver_match.url_name == 'home' %}text-cyprus-700 bg-sand-100 border border-white{% else %}bg-none text-sand-100{% endif%}">
         <svg class="w-5 h-5 fill-cyprus-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">

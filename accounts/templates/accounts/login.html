@@ -1,17 +1,52 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="w-10/12 sm:w-9/12 md:max-w-80 flex flex-col items-center justify-center">
+    <div class="w-10/12 sm:w-9/12 md:max-w-96 flex flex-col items-center justify-center">
         <div class="flex items-center gap-0 font-display">
-            <p class="text-sand-100 font-bold text-base">afturk</p><span class="text-white/20 font-bold">eats</span><svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#f0ede4"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 9.5C13.3807 9.5 14.5 10.6193 14.5 12C14.5 13.3807 13.3807 14.5 12 14.5C10.6193 14.5 9.5 13.3807 9.5 12C9.5 10.6193 10.6193 9.5 12 9.5Z" fill="#004741"></path> </g></svg>
+            <p class="text-sand-100 font-bold text-base">afturk</p><span class="text-white/20 font-bold">eats</span><svg class="w-10 h-10 animate-ping" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#f0ede4"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 9.5C13.3807 9.5 14.5 10.6193 14.5 12C14.5 13.3807 13.3807 14.5 12 14.5C10.6193 14.5 9.5 13.3807 9.5 12C9.5 10.6193 10.6193 9.5 12 9.5Z" fill="#004741"></path> </g></svg>
         </div>
         <!-- Login form -->
-        <div class="w-full flex flex-col px-3 py-4 border border-sand-200/10 rounded-2xl">
+        <form method="post" class="w-full flex flex-col bg-white/10 backdrop-blur-md px-3 py-4 border border-sand-200/10 rounded-2xl">
             <span class="w-full flex flex-col items-start gap-2">
-                <p class="font-display">
+                <p class="text-sand-100 font-bold">
                     Welcome back
                 </p>
+                <p class="font-light text-[10px] text-sand-100/30">
+                    Log in to your account
+                </p>
             </span>
-        </div>
+
+            <!-- Username -->
+            <span class="flex flex-col items-start mt-3 gap-1">
+                <label for="username" class="text-sand-100/60 text-xs font-light">Username</label>
+                <input type="text" name="username" placeholder="your_username" class="border focus:ring-1 focus:ring-sand-100/30 outline-none border-sand-200/10 rounded-xl px-2 py-3 w-full placeholder:text-sand-100/30 text-sand-100 placeholder:text-sm caret-sand-100 placeholder:font-light" required>
+            </span>
+
+            <!-- Password -->
+            <span class="flex flex-col items-start mt-3 gap-1">
+                <label for="password" class="text-sand-100/60 text-xs font-light">Password</label>
+                <input type="password" name="password" placeholder="*************" class="border focus:ring-1 focus:ring-sand-100/30 outline-none border-sand-200/10 rounded-xl px-2 py-3 w-full placeholder:text-sand-100/30 placeholder:text-sm text-sand-100 caret-sand-100 placeholder:font-light" required>
+            </span>
+            
+            <!-- Forgot Password -->
+            <span class="flex items-end justify-end my-3">
+                <a href="#" class="text-sand-100 font-light text-xs cursor-pointer">
+                    Forgot password?
+                </a>
+            </span>
+
+            <button type="submit" class="w-full rounded-xl cursor-pointer active:scale-95 transition-all duration-500 text-sm py-3 flex items-center justify-center text-cyprus-700 bg-sand-100">
+                Login
+            </button>
+        </form>
+        <span class="w-full flex flex-col gap-2 my-4 items-center justify-center">
+            <p class="text-sm text-sand-100 font-light">
+                Don't have an account?
+            </p>
+            <a href="{% url 'accounts:user_registration' %}"
+            class="border border-sand-200/40 bg-white/10 backdrop-blur-md text-sand-100 rounded-3xl cursor-pointer px-3 py-2 w-fit text-sm">
+                Sign up
+            </a>
+        </span>
     </div>
 {% endblock content %}
