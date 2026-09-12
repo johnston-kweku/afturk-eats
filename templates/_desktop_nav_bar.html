@@ -9,9 +9,16 @@
             </button>
         </div>
         <div>
-            <button onclick="window.location.href=`{% url 'accounts:login' %}`" class="font-light px-3 py-2 text-xs cursor-pointer active:scale-95 transition-all duration-500 rounded-3xl {% if request.resolver_match.url_name == 'login' %}text-cyprus-700 bg-sand-100 border-white {% else %} text-sand-100 bg-none hover:bg-sand-50 hover:text-cyprus-700 {% endif %}">
-                Login
-            </button>
+            {% if request.user.is_authenticated %}
+                <button onclick="window.location.href=`{% url 'accounts:logout' %}`" class="font-light px-3 py-2 text-xs cursor-pointer active:scale-95 transition-all duration-500 rounded-3xl {% if request.resolver_match.url_name == 'login' %}text-cyprus-700 bg-sand-100 border-white {% else %} text-sand-100 bg-none hover:bg-sand-50 hover:text-cyprus-700 {% endif %}">
+                    Logout
+                </button>
+            {% else %}
+                <button onclick="window.location.href=`{% url 'accounts:login' %}`" class="font-light px-3 py-2 text-xs cursor-pointer active:scale-95 transition-all duration-500 rounded-3xl {% if request.resolver_match.url_name == 'login' %}text-cyprus-700 bg-sand-100 border-white {% else %} text-sand-100 bg-none hover:bg-sand-50 hover:text-cyprus-700 {% endif %}">
+                    Login
+                </button>
+            {% endif %}
         </div>
+            
     </nav>
 {% endblock content %}

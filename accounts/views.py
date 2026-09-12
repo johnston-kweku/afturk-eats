@@ -70,18 +70,20 @@ def login_view(request):
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '')
 
-        if not username or not password:
-            messages.error(request, 'Please provide both username and password.')
-            return render(request, 'accounts/login.html', {'username': username})
+        errors = {}
+        if not username: errors['username'] = 'Please provide a username.'
+        if not password: errors['password'] = 'Please enter your password'
+        if errors:
+            return render(request, 'accounts/login.html', {'username': username, 'errors': errors})
 
         user = authenticate(request, username=username, password=password)
 
         if user is None:
-            messages.error(request, 'Invalid username or password.')
-            return render(request, 'accounts/login.html', {'username': username})
+            errors['user_does_not_exist'] = 'This account does not exist'
+            return render(request, 'accounts/login.html', {'username': username, 'errors': errors})
 
         if not user.is_active:
-            messages.error(request, 'This account has been deactivated. Contact support.')
+            errors['account_deactivated'] = 'This account has been deactivated. Please contact support'
             return render(request, 'accounts/login.html', {'username': username})
 
         login(request, user)

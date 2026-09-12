@@ -7,6 +7,7 @@
         </div>
         <!-- Login form -->
         <form method="post" class="w-full flex flex-col bg-white/10 backdrop-blur-md px-3 py-4 border border-sand-200/10 rounded-2xl">
+            {% csrf_token %}
             <span class="w-full flex flex-col items-start gap-2">
                 <p class="text-sand-100 font-bold">
                     Welcome back
@@ -15,7 +16,19 @@
                     Log in to your account
                 </p>
             </span>
-
+            {% if errors.user_does_not_exist %}
+                <span class="w-full flex items-center justify-center">
+                    <p class="text-red-600 font-light text-xs">
+                        {{ errors.user_does_not_exist }}
+                    </p>
+                </span>
+            {% elif errors.account_deactivated %}
+                <span class="w-full flex items-center justify-center">
+                    <p class="text-red-600 font-light text-xs">
+                        {{ errors.account_deactivated }}
+                    </p>
+                </span>
+            {% endif %}
             <!-- Username -->
             <span class="flex flex-col items-start mt-3 gap-1">
                 <label for="username" class="text-sand-100/60 text-xs font-light">Username</label>

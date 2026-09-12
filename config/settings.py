@@ -157,3 +157,9 @@ PAYSTACK_SECRET_KEY = os.getenv('PAYSTACK_SECRET_KEY')
 # SMS / OTP
 SMS_API_KEY = os.getenv('SMS_API_KEY')
 SMS_SENDER_ID = os.getenv('SMS_SENDER_ID', 'Afturk')
+
+
+
+
+LOGIN_REDIRECT_URL = 'accounts:home'
+LOGOUT_REDIRECT_URL = 'accounts:login'

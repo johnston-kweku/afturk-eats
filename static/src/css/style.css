@@ -7,6 +7,7 @@
     --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
+    --color-red-600: oklch(57.7% 0.245 27.325);
     --color-black: #000;
     --color-white: #fff;
     --spacing: 0.25rem;
@@ -562,6 +563,9 @@
   }
   .text-cyprus-700 {
     color: var(--color-cyprus-700);
+  }
+  .text-red-600 {
+    color: var(--color-red-600);
   }
   .text-sand-100 {
     color: var(--color-sand-100);

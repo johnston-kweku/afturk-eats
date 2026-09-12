@@ -27,7 +27,6 @@ class CustomUserAdmin(UserAdmin):
             'fields': (
                 'first_name',
                 'last_name',
-                'date_of_birth',
                 'email',
                 'phone_number',
             ),
@@ -63,7 +62,6 @@ class CustomUserAdmin(UserAdmin):
             'password2',
             'first_name',
             'last_name',
-            'date_of_birth',
             'email',
             'phone_number',
             'role',
