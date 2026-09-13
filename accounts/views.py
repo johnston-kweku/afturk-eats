@@ -26,7 +26,7 @@ def home(request):
     return render(request, 'accounts/index.html')
 
 
-@role_required('ADMIN')
+@role_required(User.Role.ADMIN)
 def generate_invite_link(request):
     try:
         data = json.loads(request.body)
@@ -58,6 +58,16 @@ def generate_invite_link(request):
         'message': 'Invitation link generated successfully.',
         'invitation_link': invitation_link
     })
+
+
+@role_required(User.Role.ADMIN)
+def invite_link(request):
+    return render(request, 'register/invitation.html')
+
+
+
+
+
 
 def invalid_invite(request):
     return render(request, 'errors/invalid_invite.html')
@@ -164,8 +174,17 @@ def user_registration(request):
         if not confirm_password: errors['confirm_password'] = 'Enter password again for confirmation'
 
         if password and confirm_password and password != confirm_password:
-            errors['password'] = 'Passwords do not match'
+            errors['passwords_do_not_match'] = 'Passwords do not match'
 
+        if User.objects.filter(phone_number=phone_number).exists():
+            errors['phone_number'] = 'This phone number is already in use'
+
+        if User.objects.filter(username=username).exists():
+            errors['username'] = 'This username already exists.'
+
+        if email and User.objects.filter(email=email).exists():
+            errors['email'] = 'This email is alraedy in use.'
+        
         if errors:
             return render(request, template_mapping[registration_role], {
                 'errors': errors,
