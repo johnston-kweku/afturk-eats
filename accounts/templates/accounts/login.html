@@ -32,7 +32,7 @@
             <!-- Username -->
             <span class="flex flex-col items-start mt-3 gap-1">
                 <label for="username" class="text-sand-100/60 text-xs font-light">Username</label>
-                <input type="text" name="username" placeholder="your_username" class="border focus:ring-1 focus:ring-sand-100/30 outline-none border-sand-200/10 rounded-xl px-2 py-3 w-full placeholder:text-sand-100/30 text-sand-100 placeholder:text-sm caret-sand-100 placeholder:font-light" required>
+                <input type="text" name="username" id="username" autocomplete="username" placeholder="your_username" class="border focus:ring-1 focus:ring-sand-100/30 outline-none border-sand-200/10 rounded-xl px-2 py-3 w-full placeholder:text-sand-100/30 text-sand-100 placeholder:text-sm caret-sand-100 placeholder:font-light" required>
                 {% if errors.username %}
                     <p class="text-red-600 font-light text-xs">
                         {{ errors.username }}
@@ -43,7 +43,7 @@
             <!-- Password -->
             <span class="flex flex-col items-start mt-3 gap-1">
                 <label for="password" class="text-sand-100/60 text-xs font-light">Password</label>
-                <input type="password" name="password" placeholder="*************" class="border focus:ring-1 focus:ring-sand-100/30 outline-none border-sand-200/10 rounded-xl px-2 py-3 w-full placeholder:text-sand-100/30 placeholder:text-sm text-sand-100 caret-sand-100 placeholder:font-light" required>
+                <input type="password" name="password" id="password" placeholder="*************" class="border focus:ring-1 focus:ring-sand-100/30 outline-none border-sand-200/10 rounded-xl px-2 py-3 w-full placeholder:text-sand-100/30 placeholder:text-sm text-sand-100 caret-sand-100 placeholder:font-light" required>
                 {% if errors.password %}
                     <p class="text-red-600 font-light text-xs">
                         {{ errors.password }}
