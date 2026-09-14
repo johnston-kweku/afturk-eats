@@ -5,9 +5,12 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.db import transaction
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 from order.models import Category
+from rider.models import RiderProfile
 from .decorators import role_required
 from .models import Invitation, User
+import uuid
 from .helpers import (
     create_token, 
     _handle_customer_sign_up, 
@@ -128,7 +131,11 @@ def user_registration(request):
     rider_template_path = 'register/rider_registration.html'
     vendor_template_path = 'register/vendor_registration.html'
     admin_registration = 'register/admin_registration.html'
+
     categories = Category.objects.all()
+    vehicles = RiderProfile.Vehicle.values
+
+
     template_mapping = {
         User.Role.CUSTOMER: customer_template_path,
         User.Role.RIDER: rider_template_path,
@@ -140,20 +147,26 @@ def user_registration(request):
         if not token:
             return render(request, customer_template_path)
 
-        invitation = get_object_or_404(Invitation, token=token)
+        try:
+            invitation = Invitation.objects.get(token=token)
+        except (Invitation.DoesNotExist, ValidationError):
+            return redirect('accounts:invalid_invite')
 
         if not invitation.is_valid():
             return redirect('accounts:invalid_invite')
 
-        context = {'token': token, 'categories': categories}
+        context = {'token': token, 'categories': categories, 'vehicles': vehicles}
         registration_role = invitation.role
         return render(request, template_mapping[registration_role], context)
 
     if request.method == 'POST':
         token = request.POST.get('token', '')
-        if token:
-            invitation = get_object_or_404(Invitation, token=token)
-
+        if token:   
+            try:
+                invitation = Invitation.objects.get(token=token)
+            except (Invitation.DoesNotExist, ValidationError):
+                return redirect('accounts:invalid_invite')
+            
             if not invitation.is_valid():
                 return redirect('accounts:invalid_invite')
 
@@ -191,7 +204,8 @@ def user_registration(request):
                 'errors': errors,
                 'token': token,
                 'data': request.POST,
-                'categories': categories
+                'categories': categories,
+                'vehicles': vehicles
             })
 
         if registration_role == User.Role.CUSTOMER:
@@ -234,7 +248,8 @@ def user_registration(request):
                 return render(request, template_mapping[registration_role], {
                     'errors': errors,
                     'token': token,
-                    'data': request.POST
+                    'data': request.POST,
+                    'vehicles': vehicles
                 })
 
             user, rider_profile = _handle_rider_sign_up(

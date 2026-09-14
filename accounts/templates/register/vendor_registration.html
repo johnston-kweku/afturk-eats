@@ -17,6 +17,7 @@
         <!-- Sign up form -->
         <form method="post" class="w-full border border-sand-200/10 bg-white/10 backdrop-blur-md flex flex-col rounded-2xl px-3 py-4">
             {% csrf_token %}
+            <input type="hidden" name="token" value="{{ token }}">
             <p class="font-display text-sand-100 font-normal text-lg mb-4">
                 YOUR DETAILS
             </p>
@@ -117,7 +118,7 @@
 
                     <div class="grid grid-cols-2 gap-2 mt-1">
                         {% for category in categories %}
-                            <label class="relative border border-sand-200/10 rounded-xl p-3 flex items-center gap-2 cursor-pointer has-[:checked]:border-cyprus-700 has-[:checked]:bg-cyprus-700/20 transition">
+                            <label class="relative border border-sand-200/10 rounded-xl p-3 flex items-center gap-2 cursor-pointer has-checked:border-cyprus-700 has-checked:bg-cyprus-700/20 transition">
                                 <input
                                     type="checkbox"
                                     name="categories"
@@ -130,9 +131,9 @@
                         {% endfor %}
                     </div>
 
-                    {% if errors.categories %}
+                    {% if errors.category_ids %}
                         <p class="text-red-600 font-light text-xs">
-                            {{ errors.categories }}
+                            {{ errors.category_ids }}
                         </p>
                     {% endif %}
                 </span>
