@@ -8,7 +8,7 @@
                 <p class="text-sand-100 font-bold text-base">afturk</p><span class="text-white/20 font-bold">eats</span><svg class="w-10 h-10 animate-ping" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#f0ede4"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 9.5C13.3807 9.5 14.5 10.6193 14.5 12C14.5 13.3807 13.3807 14.5 12 14.5C10.6193 14.5 9.5 13.3807 9.5 12C9.5 10.6193 10.6193 9.5 12 9.5Z" fill="#004741"></path> </g></svg>
             </span>
             <p class="font-display text-3xl md:text-4xl">
-                Rider Sign Up
+                🏍 Courier Sign Up
             </p>
             <p class="text-sand-100/40 font-light text-sm">
                 Invite Only • Reveiwed within 48 hours
@@ -16,7 +16,7 @@
         </span>
 
         <!-- Sign up form -->
-        <form method="post" class="w-full border border-sand-200/10 bg-white/10 backdrop-blur-md flex flex-col rounded-2xl px-3 py-4">
+        <form method="post" enctype="multipart/form-data" class="w-full border border-sand-200/10 bg-white/10 backdrop-blur-md flex flex-col rounded-2xl px-3 py-4">
             {% csrf_token %}
             <input type="hidden" name="token" value="{{ token }}">
             <p class="font-display text-sand-100 font-normal text-lg mb-4">
@@ -155,7 +155,7 @@
                 </span>
                 <span class="flex flex-col mt-3 w-full">
                     <label for="student_id_number" class="text-sm font-light text-sand-100">Student ID Number <span class="text-sand-100/40 text-xs">(If you are a student)</span></label>
-                    <input type="student_id_number" name="student_id_number" required id="student_id_number" value="{{ data.student_id_number|default:'' }}" placeholder="Student Id (If A Student)" class="outline-none border focus:ring-1 focus:ring-sand-100/30 border-sand-200/10 rounded-xl px-2 py-3 w-full placeholder:text-sand-100/30 text-sand-100 placeholder:text-sm caret-sand-100 placeholder:font-light">
+                    <input type="student_id_number" name="student_id_number"  id="student_id_number" value="{{ data.student_id_number|default:'' }}" placeholder="Student Id (If A Student)" class="outline-none border focus:ring-1 focus:ring-sand-100/30 border-sand-200/10 rounded-xl px-2 py-3 w-full placeholder:text-sand-100/30 text-sand-100 placeholder:text-sm caret-sand-100 placeholder:font-light">
                     {% if errors.student_id_number %}
                         <p class="text-xs font-light text-red-600">
                             {{ errors.student_id_number }}
@@ -167,14 +167,24 @@
                     <label for="vehicle_type" class="text-sm font-light text-sand-100">
                         Select a Vehicle <span class="text-cyprus-700">*</span>
                     </label>
-                    <select name="vehicle_type" id="vehicle_type" class="text-sand-100 outline-none focus:ring focus:ring-sand-100/10 rounded-xl py-3 px-3">
+                    <select name="vehicle_type" required id="vehicle_type" class="text-sand-100 outline-none focus:ring focus:ring-sand-100/10 rounded-xl py-3 px-3">
                         {% for vehicle in vehicles %}
-                            <option value="{{ vehicle }}">{{vehicle}}</option>
+                        <option value="{{ vehicle }}">{{vehicle}}</option>
                         {% endfor %}
+                        <option value="REQUEST RENT">Request to rent</option>
                     </select>
                     {% if errors.vehicle_type %}
                         <p class="text-red-600 font-light text-xs">
                             {{ errors.vehicle_type }}
+                        </p>
+                    {% endif %}
+                </span>
+                <span class="flex flex-col mt-3 w-full">
+                    <label for="date_of_birth" class="text-sm font-light text-sand-100">Date Of Birth <span class="text-sand-100/40 text-xs">(If you are a student)</span></label>
+                    <input type="date" required name="date_of_birth"  id="date_of_birth" value="{{ data.date_of_birth|default:'' }}" class="outline-none border focus:ring-1 focus:ring-sand-100/30 border-sand-200/10 rounded-xl px-2 py-3 w-full placeholder:text-sand-100/30 text-sand-100 placeholder:text-sm caret-sand-100 placeholder:font-light">
+                    {% if errors.date_of_birth %}
+                        <p class="text-xs font-light text-red-600">
+                            {{ errors.date_of_birth }}
                         </p>
                     {% endif %}
                 </span>

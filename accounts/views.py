@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -28,6 +29,15 @@ import json
 
 def home(request):
     return render(request, 'accounts/index.html')
+
+def custom_404(request, exception):
+    return render(request, 'errors/404.html', status=404)
+
+def custom_403(request, exception):
+    return render(request, 'errors/403.html', status=403)
+
+def custom_500(request):
+    return render(request, 'errors/500.html', status=500)
 
 
 @role_required(User.Role.ADMIN)
@@ -126,6 +136,8 @@ def logout_view(request):
 
 
 def user_registration(request):
+    if request.user.is_authenticated:
+        return redirect(get_dashboard_url(request.user))
 
     customer_template_path = 'register/customer_registration.html'
     rider_template_path = 'register/rider_registration.html'
@@ -198,7 +210,7 @@ def user_registration(request):
 
         if email and User.objects.filter(email=email).exists():
             errors['email'] = 'This email is alraedy in use.'
-        
+
         if errors:
             return render(request, template_mapping[registration_role], {
                 'errors': errors,
@@ -223,7 +235,7 @@ def user_registration(request):
 
 
         if registration_role == User.Role.RIDER:
-            ghana_card_number = request.POST.get('ghana_card_number', '')
+            ghana_card_number = request.POST.get('ghana_card_number', '').strip()
             ghana_card_image = request.FILES.get('ghana_card_image', '')
             profile_image = request.FILES.get('profile_image', '')
             student_id_number = request.POST.get('student_id_number', '')
@@ -235,13 +247,14 @@ def user_registration(request):
                 rented_vehicle = True
 
             ghana_card_number_is_valid = validate_ghana_card(ghana_card_number)
-
+            if not ghana_card_number: errors['ghana_card_number'] = 'Ghana card number is required'
             if not ghana_card_number_is_valid: errors['ghana_card_number'] = 'Invalid Ghana Card Number format'
             if not ghana_card_image: errors['ghana_card_image'] = 'Image of Ghana card is required for verification'
             if not profile_image: errors['profile_image'] = 'Selfie of yourself is required for verification'
             if is_student and not student_id_number: errors['student_id_number'] = 'Student ID is required for riders who are also students.'
             if not vehicle_type: errors['vehicle_type'] = 'Please select type of vehicle'
             if not date_of_birth: errors['date_of_birth'] = 'Date of birth is required'
+
 
 
             if errors:
@@ -264,13 +277,14 @@ def user_registration(request):
                 date_of_birth=date_of_birth,
                 vehicle_type=vehicle_type,
                 is_student=is_student,
+                profile_image=profile_image,
                 student_id_number=student_id_number,
                 rented_vehicle=rented_vehicle if rented_vehicle else False
             )
             invitation.is_used = True
             invitation.used_by = user
             invitation.save()
-            return redirect('accounts:pending_approval')
+            return redirect(f'{reverse('accounts:pending_approval')}?role={registration_role}')
 
         if registration_role == User.Role.VENDOR:
             business_name = request.POST.get('business_name', '').strip()

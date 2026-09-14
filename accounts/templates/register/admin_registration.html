@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="w-11/12 sm:w-9/12 md:max-w-96 flex flex-col md:my-18">
+        <span class="text-sand-100  mb-3 font-bold w-full flex flex-col gap-2 items-center justify-center">
+            <span class="flex items-center gap-0 font-display">
+                <p class="text-sand-100 font-bold text-base">afturk</p><span class="text-white/20 font-bold">eats</span><svg class="w-10 h-10 animate-ping" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#f0ede4"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 9.5C13.3807 9.5 14.5 10.6193 14.5 12C14.5 13.3807 13.3807 14.5 12 14.5C10.6193 14.5 9.5 13.3807 9.5 12C9.5 10.6193 10.6193 9.5 12 9.5Z" fill="#004741"></path> </g></svg>
+            </span>
+            <p class="font-display text-2xl md:text-3xl">
+                Administrator Sign Up
+            </p>
+            <p class="text-sand-100/40 font-light text-sm">
+                Full platform access and management
+            </p>
+        </span>
+
+        <!-- Sign up form -->
+        <form method="post" class="w-full border border-sand-200/10 bg-white/10 backdrop-blur-md flex flex-col rounded-2xl px-3 py-4">
+            {% csrf_token %}
+            <input type="hidden" name="token" value="{{ token }}">
+            <span class="flex-col space-y-4 w-full items-center">
+                <span class="flex flex-col w-full">
+                    <label for="first_name" class="text-sm font-light text-sand-100">First Name <span class="text-cyprus-700">*</span></label>
+                    <input type="text" name="first_name" required value="{{ data.first_name|default:'' }}" id="first_name" placeholder="Justin" class="outline-none border focus:ring-1 focus:ring-sand-100/30 border-sand-200/10 rounded-xl px-2 py-3 w-full placeholder:text-sand-100/30 text-sand-100 placeholder:text-sm caret-sand-100 placeholder:font-light">
+                    {% if errors.first_name %}
+                        <p class="text-red-600 font-light text-xs">
+                            {{ errors.first_name }}
+                        </p>
+                    {% endif %}
+                </span>
+                <span class="flex flex-col w-full">
+                    <label for="last_name" class="text-sm font-light text-sand-100">Last Name <span class="text-cyprus-700">*</span></label>
+                    <input type="text" name="last_name" required id="last_name" value="{{ data.last_name|default:'' }}" placeholder="Mensah" class="outline-none border focus:ring-1 focus:ring-sand-100/30 border-sand-200/10 rounded-xl px-2 py-3 w-full placeholder:text-sand-100/30 text-sand-100 placeholder:text-sm caret-sand-100 placeholder:font-light">
+                    {% if errors.last_name %}
+                        <p class="text-xs font-light text-red-600">
+                            {{ errors.last_name }}
+                        </p>
+                    {% endif %}
+                </span>
+                <span class="flex flex-col w-full">
+                    <label for="phone_number" class="text-sm font-light text-sand-100">Phone Number <span class="text-cyprus-700">*</span></label>
+                    <input type="tel" name="phone_number" required id="phone_number" value="{{ data.phone_number|default:'' }}" placeholder="050 550 4257" class="outline-none border focus:ring-1 focus:ring-sand-100/30 border-sand-200/10 rounded-xl px-2 py-3 w-full placeholder:text-sand-100/30 text-sand-100 placeholder:text-sm caret-sand-100 placeholder:font-light">
+                    {% if errors.phone_number %}
+                        <p class="text-red-600 text-xs font-light">
+                            {{ errors.phone_number }}
+                        </p>
+                    {% endif %}
+                </span>
+                <span class="flex flex-col w-full">
+                    <label for="email" class="text-sm font-light text-sand-100">Email <span class="text-sand-100/40 font-light text-[10px]">(Optional)</span></label>
+                    <input type="email" name="email" id="email" value="{{ data.email|default:'' }}" placeholder="justin@example.com" class="outline-none invalid:border-red-600 invalid:text-red-600 border focus:ring-1 focus:ring-sand-100/30 border-sand-200/10 rounded-xl px-2 py-3 w-full placeholder:text-sand-100/30 text-sand-100 placeholder:text-sm caret-sand-100 placeholder:font-light">
+                    {% if errors.email %}
+                        <p class="text-red-600 text-xs font-light">
+                            {{ errors.email }}
+                        </p>
+                    {% endif %}
+                </span>
+                <span class="flex flex-col w-full">
+                    <label for="username" class="text-sm font-light text-sand-100">Username <span class="text-cyprus-700">*</span></label>
+                    <input type="text" name="username" required id="username" value="{{ data.username|default:'' }}" placeholder="your_username" class="outline-none border focus:ring-1 focus:ring-sand-100/30 border-sand-200/10 rounded-xl px-2 py-3 w-full placeholder:text-sand-100/30 text-sand-100 placeholder:text-sm caret-sand-100 placeholder:font-light">
+                    {% if errors.username %}
+                        <p class="text-xs font-light text-red-600">
+                            {{ errors.username }}
+                        </p>
+                    {% endif %}
+                </span>
+                <span class="flex flex-col w-full">
+                    <label for="password" class="text-sm font-light text-sand-100">Password <span class="text-cyprus-700">*</span></label>
+                    <input type="password" name="password" required id="password" value="{{ data.password|default:'' }}" placeholder="*********" class="outline-none border focus:ring-1 focus:ring-sand-100/30 border-sand-200/10 rounded-xl px-2 py-3 w-full placeholder:text-sand-100/30 text-sand-100 placeholder:text-sm caret-sand-100 placeholder:font-light">
+                    {% if errors.password %}
+                        <p class="text-xs font-light text-red-600">
+                            {{ errors.password }}
+                        </p>
+                    {% endif %}
+                </span>
+                <span class="flex flex-col w-full">
+                    <label for="confirm_password" class="text-sm font-light text-sand-100">Confirm Password <span class="text-cyprus-700">*</span></label>
+                    <input type="password" name="confirm_password" required value="{{ data.confirm_password|default:'' }}" id="confirm_password" placeholder="*********" class="outline-none border focus:ring-1 focus:ring-sand-100/30 border-sand-200/10 rounded-xl px-2 py-3 w-full placeholder:text-sand-100/30 text-sand-100 placeholder:text-sm caret-sand-100 placeholder:font-light">
+                    {% if errors.confirm_password %}
+                        <p class="text-xs font-light text-red-600">
+                            {{ errors.confirm_password }}
+                        </p>
+                    {% endif %}
+                </span>
+                {% if errors.passwords_do_not_match %}
+                    <span class="w-full flex items-center justify-center">
+                        <p class="text-red-600 font-light text-xs">
+                            {{ errors.passwords_do_not_match }}
+                        </p>
+                    </span>
+                {% endif %}
+                <button type="submit" class="w-full rounded-xl cursor-pointer active:scale-95 transition-all duration-500 text-sm py-3 flex items-center justify-center text-cyprus-700 bg-sand-100">
+                    Create Account
+                </button>
+            </span>
+        </form>
+    </div>
+
+{% endblock content %}
