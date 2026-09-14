@@ -1,6 +1,120 @@
 {% extends 'base.html' %}
+{% load static %}
+
 
 {% block content %}
-    
+    <div class="min-h-screen w-full bg-sand-100 flex flex-col">
+        <div class="w-full h-64 bg-cyprus-700">
+            <span class="w-11/12 md:w-6/12 flex mx-auto mt-26 gap-2 flex-col">
+                <h1 class="font-display text-sand-100 text-lg md:text-2xl">
+                    Invite Links
+                </h1>
+                <p class="text-sand-100/40 font-light text-sm">
+                    Generate and manage invitaition links
+                </p>
+            </span>
+        </div>
 
+        <div class="w-11/12 md:w-6/12 mx-auto -mt-16 flex flex-col gap-6 pb-16">
+
+            <div class="bg-white rounded-2xl shadow-sm p-6 flex flex-col gap-4">
+                <h2 class="font-display text-cyprus-700 text-base md:text-lg">
+                    1. Choose a role
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="role-options">
+                    <button
+                        type="button"
+                        class="role-card text-left border border-cyprus-100 rounded-xl p-4 flex flex-col gap-1 hover:border-cyprus-700 transition-colors"
+                        data-role="ADMIN"
+                        id="role-admin"
+                    >
+                        <span class="font-display text-cyprus-700">Admin</span>
+                        <span class="text-sm text-cyprus-900/60 font-sans">
+                            Full platform access and management
+                        </span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="role-card text-left border border-cyprus-100 rounded-xl p-4 flex flex-col gap-1 hover:border-cyprus-700 transition-colors"
+                        data-role="VENDOR"
+                        id="role-vendor"
+                    >
+                        <span class="font-display text-cyprus-700">Vendor</span>
+                        <span class="text-sm text-cyprus-900/60 font-sans">
+                            Register a business and list products
+                        </span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="role-card text-left border border-cyprus-100 rounded-xl p-4 flex flex-col gap-1 hover:border-cyprus-700 transition-colors"
+                        data-role="RIDER"
+                        id="role-rider"
+                    >
+                        <span class="font-display text-cyprus-700">Rider</span>
+                        <span class="text-sm text-cyprus-900/60 font-sans">
+                            Accept deliveries and earn on the go
+                        </span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="role-card text-left border border-cyprus-100 rounded-xl p-4 flex flex-col gap-1 hover:border-cyprus-700 transition-colors"
+                        data-role="CUSTOMER"
+                        id="role-customer"
+                    >
+                        <span class="font-display text-cyprus-700">Customer</span>
+                        <span class="text-sm text-cyprus-900/60 font-sans">
+                            Order food and track deliveries
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm p-6 flex flex-col gap-4">
+                <h2 class="font-display text-cyprus-700 text-base md:text-lg">
+                    2. Generate
+                </h2>
+
+                <button
+                    type="button"
+                    id="generate-invite-btn"
+                    disabled
+                    class="bg-cyprus-700 disabled:bg-cyprus-200 disabled:cursor-not-allowed text-sand-100 font-display rounded-xl py-3 px-6 transition-colors"
+                >
+                    Generate Invite Link
+                </button>
+
+                <p id="generate-error" class="text-sm text-red-600 hidden"></p>
+
+                <div id="generate-result" class="hidden flex-col gap-2">
+                    <label for="invite-link-output" class="text-sm text-cyprus-900/60 font-sans">
+                        Invite link
+                    </label>
+                    <div class="flex gap-2">
+                        <input
+                            type="text"
+                            id="invite-link-output"
+                            readonly
+                            class="flex-1 border border-cyprus-100 rounded-lg px-3 py-2 text-sm font-sans bg-sand-100"
+                        >
+                        <button
+                            type="button"
+                            id="copy-invite-btn"
+                            class="border border-cyprus-700 text-cyprus-700 rounded-lg px-4 py-2 text-sm font-display hover:bg-cyprus-700 hover:text-sand-100 transition-colors"
+                        >
+                            Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+<script src="{% static 'src/js/accounts/invite_link.js' %}"></script>
 {% endblock content %}
+
+
