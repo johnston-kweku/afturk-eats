@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.db import transaction
 from django.contrib import messages
+from order.models import Category
 from .decorators import role_required
 from .models import Invitation, User
 from .helpers import (
@@ -85,13 +86,13 @@ def login_view(request):
         if not username: errors['username'] = 'Please provide a username.'
         if not password: errors['password'] = 'Please enter your password'
         if errors:
-            return render(request, 'accounts/login.html', {'username': username, 'errors': errors})
+            return render(request, 'accounts/login.html', {'username': username, 'errors': errors, 'data': request.POST})
 
         user = authenticate(request, username=username, password=password)
 
         if user is None:
-            errors['user_does_not_exist'] = 'This account does not exist'
-            return render(request, 'accounts/login.html', {'username': username, 'errors': errors})
+            errors['user_does_not_exist'] = 'Password or username is incorrect.'
+            return render(request, 'accounts/login.html', {'username': username, 'errors': errors, 'data': request.POST})
 
         if not user.is_active:
             errors['account_deactivated'] = 'This account has been deactivated. Please contact support'
@@ -100,13 +101,13 @@ def login_view(request):
         login(request, user)
 
         # Role-based redirect
-        if user.role == user.Role.RIDER:
+        if user.role == User.Role.RIDER:
             return redirect(get_dashboard_url(user))
-        elif user.role == user.Role.VENDOR:
+        elif user.role == User.Role.VENDOR:
             return redirect(get_dashboard_url(user))
-        elif user.role == user.Role.CUSTOMER:
+        elif user.role == User.Role.CUSTOMER:
             return redirect(get_dashboard_url(user))
-        elif user.role == user.Role.ADMIN:
+        elif user.role == User.Role.ADMIN:
             return redirect(get_dashboard_url(user))
 
         return redirect('accounts:home')  # fallback
@@ -127,7 +128,7 @@ def user_registration(request):
     rider_template_path = 'register/rider_registration.html'
     vendor_template_path = 'register/vendor_registration.html'
     admin_registration = 'register/admin_registration.html'
-
+    categories = Category.objects.all()
     template_mapping = {
         User.Role.CUSTOMER: customer_template_path,
         User.Role.RIDER: rider_template_path,
@@ -144,7 +145,7 @@ def user_registration(request):
         if not invitation.is_valid():
             return redirect('accounts:invalid_invite')
 
-        context = {'token': token}
+        context = {'token': token, 'categories': categories}
         registration_role = invitation.role
         return render(request, template_mapping[registration_role], context)
 
@@ -189,7 +190,8 @@ def user_registration(request):
             return render(request, template_mapping[registration_role], {
                 'errors': errors,
                 'token': token,
-                'data': request.POST
+                'data': request.POST,
+                'categories': categories
             })
 
         if registration_role == User.Role.CUSTOMER:
@@ -256,28 +258,21 @@ def user_registration(request):
             return redirect('accounts:pending_approval')
 
         if registration_role == User.Role.VENDOR:
-            ghana_card_number = request.POST.get('ghana_card_number', '')
-            ghana_card_image = request.FILES.get('ghana_card_image', '')
             business_name = request.POST.get('business_name', '').strip()
-            profile_image = request.FILES.get('profile_image', '')
-            category = request.POST.get('category', '')
-            date_of_birth = request.POST.get('date_of_birth', '')
+            category_ids = request.POST.getlist('categories', '')
 
-            ghana_card_number_is_valid = validate_ghana_card(ghana_card_number)
 
-            if not ghana_card_number_is_valid: errors['ghana_card_number'] = 'Invalid Ghana Card Number format.'
             if not business_name: errors['business_name'] = 'Business name is required.'
-            if not profile_image: errors['profile_image'] = 'Selfie of yourself is required for verification.'
-            if not category: errors['category'] = 'Please select at least one category'
-            if not date_of_birth: errors['date_of_birth'] = 'Date of birth is required.'
-            if not ghana_card_image: errors['ghana_card_image'] = 'Image of Ghana Card is required for verification.'
+            if not category_ids: errors['category_ids'] = 'Please select at least one category'
+
 
 
             if errors:
                 return render(request, template_mapping[registration_role], {
                     'errors': errors,
                     'token': token,
-                    'data': request.POST
+                    'data': request.POST,
+                    'categories': categories
                 })
 
             user, vendor_profile = _handle_vendor_sign_up(
@@ -288,11 +283,7 @@ def user_registration(request):
                 email=email,
                 phone_number=phone_number,
                 business_name=business_name,
-                category=category,
-                date_of_birth=date_of_birth,
-                ghana_card_image=ghana_card_image,
-                ghana_card_number=ghana_card_number,
-                profile_image=profile_image
+                category_ids=category_ids,
             )
             invitation.is_used = True
             invitation.used_by = user

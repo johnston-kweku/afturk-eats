@@ -84,12 +84,8 @@ def _handle_vendor_sign_up(
         first_name, 
         last_name, 
         phone_number, 
-        profile_image, 
-        ghana_card_image,
-        ghana_card_number,
         business_name,
-        category,
-        date_of_birth,
+        category_ids,
         email=None
         ):
     with transaction.atomic():
@@ -106,13 +102,11 @@ def _handle_vendor_sign_up(
 
         vendor_profile = VendorProfile.objects.create(
             user=user,
-            profile_image=profile_image,
-            ghana_card_number=ghana_card_number,
-            ghana_card_image=ghana_card_image,
             business_name=business_name,
-            category=category,
-            date_of_birth=date_of_birth,
+
         )
+
+        vendor_profile.category.set(category_ids)
 
     return user, vendor_profile
 

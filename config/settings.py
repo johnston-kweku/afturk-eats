@@ -162,5 +162,4 @@ SMS_SENDER_ID = os.getenv('SMS_SENDER_ID', 'Afturk')
 
 
 
-LOGIN_REDIRECT_URL = 'accounts:home'
 LOGOUT_REDIRECT_URL = 'accounts:login'
