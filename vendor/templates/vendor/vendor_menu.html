@@ -1,4 +1,32 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+    <div class="w-10/12 md:w-6/12 flex flex-col items-center">
+        <div class="w-full flex items-center justify-between">
+            <span class="flex flex-col w-fit">
+                <p class="text-sand-100 font-display text-lg">
+                    Menu
+                </p>
+                <p class="text-sand-100/40 font-light text-sm">
+                    {{ items_count }} items
+                </p>
+            </span>
+            <a href="{% url 'vendor:add_menu_item' %}" class="text-cyprus-700 bg-sand-100 rounded-lg px-3 font-display py-3 flex text-sm">
+                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                <p>
+                    Add Item
+                </p>
+            </a>
+        </div>
+        {% for item in menu_items %}
+            <div class="w-full bg-white/10 backdrop-blur-md flex items-center border border-sand-100/40 rounded-xl">
+                {% if item.image %}
+                    <img src="{item.image.url}" alt="{{item.description}}" class="object-cover w-full h-full rounded-l-xl">
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
 {% endblock content %}

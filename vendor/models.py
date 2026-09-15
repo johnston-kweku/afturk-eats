@@ -16,6 +16,8 @@ class VendorProfile(models.Model):
     is_online = models.BooleanField(default=False)
     last_seen_at = models.DateTimeField(null=True, blank=True)
 
+    def __str__(self):
+        return self.user.first_name
 
 
 

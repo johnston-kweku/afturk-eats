@@ -20,10 +20,12 @@ def vendor_menu(request):
     menu_items = MenuItem.objects.filter(
         vendor=vendor_profile
     )
+    items_count = menu_items.count()
     business_name = vendor_profile.business_name
     context = {
         'menu_items': menu_items,
-        'business_name': business_name
+        'business_name': business_name,
+        'items_count': items_count
     }
     return render(request, 'vendor/vendor_menu.html', context)
 

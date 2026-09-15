@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import VendorProfile
+from .models import VendorProfile, MenuItem
 
 
 # Register your models here.
@@ -13,4 +13,11 @@ class VendorProfileAdmin(admin.ModelAdmin):
 
     list_editable = [
         'is_approved'
+    ]
+
+
+@admin.register(MenuItem)
+class MenuItemAdmin(admin.ModelAdmin):
+    list_display = [
+        'vendor', 'name', 'category', 'price'
     ]

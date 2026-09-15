@@ -363,6 +363,9 @@
   .h-full {
     height: 100%;
   }
+  .max-h-full {
+    max-height: 100%;
+  }
   .min-h-screen {
     min-height: 100vh;
   }
@@ -505,6 +508,14 @@
   }
   .rounded-xl {
     border-radius: var(--radius-xl);
+  }
+  .rounded-l {
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+  }
+  .rounded-l-xl {
+    border-top-left-radius: var(--radius-xl);
+    border-bottom-left-radius: var(--radius-xl);
   }
   .border {
     border-style: var(--tw-border-style);
@@ -984,6 +995,12 @@
     }
     .md\:w-6\/12 {
       width: calc(6 / 12 * 100%);
+    }
+    .md\:w-7\/12 {
+      width: calc(7 / 12 * 100%);
+    }
+    .md\:w-8\/12 {
+      width: calc(8 / 12 * 100%);
     }
     .md\:w-9\/12 {
       width: calc(9 / 12 * 100%);
