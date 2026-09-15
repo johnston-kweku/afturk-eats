@@ -12,5 +12,6 @@ urlpatterns = [
     path('approval/pending/', views.pending_approval, name='pending_approval'),
     path('invite/invalid/', views.invalid_invite, name='invalid_invite'),
     path('register/', views.user_registration, name='user_registration'),
-    path('logout/', views.logout_view, name='logout')
+    path('logout/', views.logout_view, name='logout'),
+    path('toggle/active/', views.toggle_online_status, name='toggle_status')
 ]

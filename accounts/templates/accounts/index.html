@@ -1,5 +1,100 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <div class="w-full flex flex-col items-center gap-20 px-4 md:px-0 pb-20">
 
+        <!-- Hero -->
+        <div class="w-11/12 sm:w-9/12 md:max-w-2xl flex flex-col items-center text-center gap-5 mt-4 md:mt-12">
+            <span class="flex items-center gap-0 font-display">
+                <p class="text-sand-100 font-bold text-base">afturk</p><span class="text-white/20 font-bold">eats</span>
+            </span>
+
+            <h1 class="font-display text-sand-100 font-bold text-3xl md:text-5xl leading-tight">
+                Food, groceries, and parcels — delivered around Tarkwa.
+            </h1>
+
+            <p class="text-sand-100/60 font-sans text-base md:text-lg max-w-lg">
+                Order from local vendors, or earn on the go as a rider. Built for Tarkwa, by people who live here.
+            </p>
+
+            {% if user.is_authenticated %}
+                {% if user.is_authenticated %}
+                    {% if user.is_admin %}
+                        <a href="{% url 'console:admin_dashboard' %}" class="bg-sand-100 text-cyprus-700 font-display font-bold rounded-xl px-8 py-4 mt-2 hover:bg-sand-200 transition-colors">
+                            Go to Dashboard
+                        </a>
+                    {% elif user.is_vendor %}
+                        <a href="{% url 'vendor:vendor_dashboard' %}" class="bg-sand-100 text-cyprus-700 font-display font-bold rounded-xl px-8 py-4 mt-2 hover:bg-sand-200 transition-colors">
+                            Go to Dashboard
+                        </a>
+                    {% elif user.is_rider %}
+                        <a href="{% url 'rider:rider_dashboard' %}" class="bg-sand-100 text-cyprus-700 font-display font-bold rounded-xl px-8 py-4 mt-2 hover:bg-sand-200 transition-colors">
+                            Go to Dashboard
+                        </a>
+                    {% else %}
+                        <a href="{% url 'customer:customer_dashboard' %}" class="bg-sand-100 text-cyprus-700 font-display font-bold rounded-xl px-8 py-4 mt-2 hover:bg-sand-200 transition-colors">
+                            Go to Dashboard
+                        </a>
+                    {% endif %}
+                {% else %}
+                {% endif %}
+            {% else %}
+                <div class="flex flex-col sm:flex-row gap-3 mt-2 w-full sm:w-auto items-center">
+                    <a href="{% url 'accounts:user_registration' %}" class="w-full sm:w-auto bg-sand-100 text-cyprus-700 font-display font-bold rounded-xl px-8 py-4 hover:bg-sand-200 transition-colors text-center">
+                        Order Now
+                    </a>
+                    <a href="{% url 'accounts:login' %}" class="w-full sm:w-auto border border-sand-100/40 text-sand-100 font-display font-bold rounded-xl px-8 py-4 hover:border-sand-100 transition-colors text-center">
+                        Log In
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- How it works -->
+        <div class="w-11/12 sm:w-9/12 md:w-full md:max-w-4xl flex flex-col gap-8">
+            <h2 class="font-display text-sand-100 font-bold text-xl md:text-2xl text-center">
+                How Afturk Eats works
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white/5 border border-sand-100/10 rounded-2xl p-6 flex flex-col gap-2">
+                    <span class="font-display text-sand-100 font-semibold text-lg">Order</span>
+                    <p class="text-sand-100/60 font-sans text-sm">
+                        Browse local vendors and place an order in minutes.
+                    </p>
+                </div>
+                <div class="bg-white/5 border border-sand-100/10 rounded-2xl p-6 flex flex-col gap-2">
+                    <span class="font-display text-sand-100 font-semibold text-lg">Track</span>
+                    <p class="text-sand-100/60 font-sans text-sm">
+                        Follow your order from preparing to on the way.
+                    </p>
+                </div>
+                <div class="bg-white/5 border border-sand-100/10 rounded-2xl p-6 flex flex-col gap-2">
+                    <span class="font-display text-sand-100 font-semibold text-lg">Receive</span>
+                    <p class="text-sand-100/60 font-sans text-sm">
+                        Get it delivered right to your door, on campus or off.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- For vendors and riders -->
+        {% if not user.is_authenticated %}
+        <div class="w-11/12 sm:w-9/12 md:w-full md:max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-sand-100 rounded-2xl p-8 flex flex-col gap-3">
+                <span class="font-display text-cyprus-700 font-bold text-xl">Sell on Afturk Eats</span>
+                <p class="text-cyprus-900/60 font-sans text-sm">
+                    List your menu and reach more customers around Tarkwa. Invite only for now.
+                </p>
+            </div>
+            <div class="bg-sand-100 rounded-2xl p-8 flex flex-col gap-3">
+                <span class="font-display text-cyprus-700 font-bold text-xl">Ride with Afturk Eats</span>
+                <p class="text-cyprus-900/60 font-sans text-sm">
+                    Earn on your own schedule delivering orders around town. Invite only for now.
+                </p>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
 {% endblock content %}

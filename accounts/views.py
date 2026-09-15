@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.db import transaction
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 from order.models import Category
 from rider.models import RiderProfile
 from .decorators import role_required
@@ -339,3 +340,29 @@ def user_registration(request):
 
 def pending_approval(request):
     return render(request, 'register/pending_approval.html')
+
+
+
+
+
+
+
+@login_required
+def toggle_online_status(request):
+    if request.method != 'POST':
+        return redirect(get_dashboard_url(request.user))
+
+    user = request.user
+
+    if user.is_rider():
+        profile = user.riderprofile
+    elif user.is_vendor():
+        profile = user.vendorprofile
+    else:
+        return redirect(get_dashboard_url(user))
+
+    profile.is_online = not profile.is_online
+    profile.last_seen_at = timezone.now()
+    profile.save()
+
+    return redirect(get_dashboard_url(user))

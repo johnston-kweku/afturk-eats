@@ -1,5 +1,6 @@
 from django.db import transaction
 from django.urls import reverse
+from django.shortcuts import redirect
 from .models import Invitation, User
 from rider.models import RiderProfile
 from customer.models import CustomerProfile
@@ -140,6 +141,9 @@ def _handle_admin_sign_up(
 
 
 def get_dashboard_url(user):
+    if not user.is_authenticated:
+        return redirect('accounts:login')
+    
     if user.role == User.Role.CUSTOMER:
         return reverse('customer:customer_dashboard')
 
