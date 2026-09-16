@@ -11,6 +11,9 @@
 <body class="bg-linear-to-b from-cyprus-800 font-sans to-cyprus-600 md:pt-8 pb-24 flex items-center justify-center min-h-screen">
     {% include '_desktop_nav_bar.html' %}
     {% include '_mobile_nav_bar.html' %}
+    {% if request.user.is_authenticated %}
+        {% include '_online_status.html' %}
+    {% endif %}
     <script src="{% static 'src/js/base/base.js' %}"></script>
     {% block content %}{% endblock content %}
 </body>

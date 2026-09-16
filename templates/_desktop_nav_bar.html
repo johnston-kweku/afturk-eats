@@ -24,11 +24,36 @@
                     <button onclick="window.location.href=`{% url 'vendor:vendor_menu' %}`" class="font-light px-3 py-2 text-xs cursor-pointer active:scale-95 transition-all diration-500 rounded-3xl {% if request.resolver_match.url_name == 'vendor_menu' %} bg-sand-100 border border-white text-cyprus-700{% else %}text-sand-100 bg-none hover:bg-sand-50 hover:text-cyprus-700 {% endif %}">
                         Menu
                     </button>
+                    <button onclick="window.location.href=`{% url 'vendor:vendor_menu' %}`" class="font-light px-3 py-2 text-xs cursor-pointer active:scale-95 transition-all diration-500 rounded-3xl {% if request.resolver_match.url_name == 'settings' %} bg-sand-100 border border-white text-cyprus-700{% else %}text-sand-100 bg-none hover:bg-sand-50 hover:text-cyprus-700 {% endif %}">
+                        Settings
+                    </button>
 
                 {% endif %}
             {% endif %}
         </div>
-        <div>
+        <div class="flex items-center gap-2">
+            {% if request.user.is_vendor or request.user.is_rider %}
+                <form action="{% url 'accounts:toggle_status' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="flex gap-1 items-center font-light text-xs bg-none text-sand-100 px-3 py-2  cursor-pointer active:scale-95 transition-all duration-500 rounded-3xl hover:bg-sand-50 hover:text-cyprus-700">
+                        {% if request.user.vendorprofile.is_online %}
+                            <svg class="w-4 h-4  stroke-2 stroke-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 0 1 7.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 0 1 1.06 0Z" />
+                            </svg>
+                            <p class="">
+                                Online <span class="text-[10px]  animate-ping">🟢</span>
+                            </p>
+                        {% else %}
+                            <svg class="stroke-red-600 stroke-2 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+                            </svg>
+                            <p class="">
+                                Offline
+                            </p>
+                        {% endif %}
+                    </button>
+                </form>
+            {% endif %}
             {% if request.user.is_authenticated %}
                 <button onclick="window.location.href=`{% url 'accounts:logout' %}`" class="font-light px-3 py-2 text-xs cursor-pointer active:scale-95 transition-all duration-500 rounded-3xl {% if request.resolver_match.url_name == 'login' %}text-cyprus-700 bg-sand-100 border-white {% else %} text-sand-100 bg-none hover:bg-sand-50 hover:text-cyprus-700 {% endif %}">
                     Logout

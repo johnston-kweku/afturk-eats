@@ -1,8 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
+from django.http import HttpResponseRedirect
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 from django.db import transaction
 from django.contrib import messages
@@ -346,12 +348,9 @@ def pending_approval(request):
 
 
 
-
+@require_POST
 @login_required
 def toggle_online_status(request):
-    if request.method != 'POST':
-        return redirect(get_dashboard_url(request.user))
-
     user = request.user
 
     if user.is_rider():
@@ -364,5 +363,10 @@ def toggle_online_status(request):
     profile.is_online = not profile.is_online
     profile.last_seen_at = timezone.now()
     profile.save()
+
+    next_url = request.META.get('HTTP_REFERER')
+    if next_url:
+        return HttpResponseRedirect(next_url)
+
 
     return redirect(get_dashboard_url(user))
