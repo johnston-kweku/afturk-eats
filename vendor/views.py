@@ -41,7 +41,7 @@ def add_menu_item(request):
             menu_item = form.save(commit=False)
             menu_item.vendor = vendor_profile
             menu_item.save()
-            return redirect('vendor:menu_list')
+            return redirect('vendor:vendor_menu')
 
     else:
         form = MenuItemForm(vendor_profile=vendor_profile)
@@ -60,13 +60,14 @@ def edit_menu_item(request, item_id):
         form = MenuItemForm(request.POST, request.FILES, instance=menu_item, vendor_profile=vendor_profile)
         if form.is_valid():
             form.save()
-            return redirect('vendor:menu_list')
+            return redirect('vendor:vendor_menu')
 
     else:
         form = MenuItemForm(vendor_profile=vendor_profile, instance=menu_item)
 
     return render(request, 'vendor/edit_menu_item.html', {
-        'form': form
+        'form': form,
+        'menu_item': menu_item
     })
 
 

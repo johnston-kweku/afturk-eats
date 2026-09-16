@@ -32,4 +32,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
     wireImagePreview('ghana_card_image', 'ghana_card_preview', 'ghana_card_placeholder');
     wireImagePreview('profile_image', 'profile_image_preview', 'profile_image_placeholder');
+    wireImagePreview('id_image', 'item_image_preview', 'item_image_placeholder')
 });

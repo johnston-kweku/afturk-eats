@@ -1,5 +1,133 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
+    <div class="w-11/12 md:w-6/12 flex flex-col pt-18 gap-6 pb-12">
 
+        <a href="{% url 'vendor:vendor_menu' %}" class="flex items-center gap-2 text-sand-100/60 hover:text-sand-100 font-sans text-sm w-fit transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+            Back to Menu
+        </a>
+
+        <div class="flex flex-col gap-1">
+            <h1 class="text-sand-100 font-display font-bold text-2xl md:text-3xl">
+                Edit item
+            </h1>
+            <p class="text-sand-100/40 font-light text-sm">
+                Update the details for this menu item
+            </p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="w-full flex flex-col gap-6">
+            {% csrf_token %}
+
+            <!-- Item Photo -->
+            <div class="w-full border border-sand-100/10 bg-white/5 backdrop-blur-md rounded-2xl p-5 flex flex-col gap-3">
+                <p class="text-sand-100/40 font-display text-xs tracking-wide uppercase">
+                    Item Photo
+                </p>
+
+                <label
+                    for="{{ form.image.id_for_label }}"
+                    class="relative flex flex-col gap-1 w-full items-center justify-center py-10 border-dashed border border-sand-100/40 rounded-2xl cursor-pointer overflow-hidden hover:border-sand-100 transition"
+                >
+                    <img
+                        id="item_image_preview"
+                        src="{% if menu_item.image %}{{ menu_item.image.url }}{% endif %}"
+                        class="{% if not menu_item.image %}hidden{% endif %} absolute inset-0 w-full h-full object-cover"
+                    >
+                    <div id="item_image_placeholder" class="{% if menu_item.image %}hidden{% endif %} flex flex-col items-center gap-1">
+                        <svg class="w-6 h-6 text-sand-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9m0 0l-3.5 3.5M12 9l3.5 3.5M6 20.25h12A2.25 2.25 0 0020.25 18v-3.75m-16.5 0V18A2.25 2.25 0 006 20.25z" />
+                        </svg>
+                        <p class="text-sand-100 text-sm font-light">Tap to upload a photo</p>
+                        <p class="text-sand-100/40 text-xs font-light">JPG or PNG, max 5MB</p>
+                    </div>
+                    {{ form.image }}
+                </label>
+                {% if form.image.errors %}
+                    <p class="text-red-600 text-xs font-light">{{ form.image.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Item Details -->
+            <div class="w-full border border-sand-100/10 bg-white/5 backdrop-blur-md rounded-2xl p-5 flex flex-col gap-4">
+                <p class="text-sand-100/40 font-display text-xs tracking-wide uppercase">
+                    Item Details
+                </p>
+
+                <span class="flex flex-col w-full gap-1">
+                    <label for="{{ form.name.id_for_label }}" class="text-sm font-light text-sand-100">
+                        Item Name
+                    </label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                        <p class="text-red-600 text-xs font-light">{{ form.name.errors.0 }}</p>
+                    {% endif %}
+                </span>
+
+                <span class="flex flex-col w-full gap-1">
+                    <label for="{{ form.category.id_for_label }}" class="text-sm font-light text-sand-100">
+                        Category
+                    </label>
+                    {{ form.category }}
+                    {% if form.category.errors %}
+                        <p class="text-red-600 text-xs font-light">{{ form.category.errors.0 }}</p>
+                    {% endif %}
+                </span>
+
+                <span class="flex flex-col w-full gap-1">
+                    <label for="{{ form.price.id_for_label }}" class="text-sm font-light text-sand-100">
+                        Price (GHS)
+                    </label>
+                    {{ form.price }}
+                    {% if form.price.errors %}
+                        <p class="text-red-600 text-xs font-light">{{ form.price.errors.0 }}</p>
+                    {% endif %}
+                </span>
+
+                <span class="flex flex-col w-full gap-1">
+                    <label for="{{ form.description.id_for_label }}" class="text-sm font-light text-sand-100">
+                        Description
+                    </label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        <p class="text-red-600 text-xs font-light">{{ form.description.errors.0 }}</p>
+                    {% endif %}
+                </span>
+            </div>
+
+            <!-- Availability -->
+            <div class="w-full border border-sand-100/10 bg-white/5 backdrop-blur-md rounded-2xl p-5 flex items-center justify-between gap-4">
+                <div class="flex flex-col gap-1">
+                    <label for="{{ form.is_available.id_for_label }}" class="text-sand-100 font-display font-semibold text-base">
+                        Available to order
+                    </label>
+                    <p class="text-sand-100/40 font-light text-sm">
+                        Customers can add this to their cart
+                    </p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    {{ form.is_available }}
+                    <div class="w-11 h-6 bg-sand-100/20 rounded-full peer peer-checked:bg-cyprus-100 peer-checked:[&>span]:translate-x-5 transition-colors">
+                        <span class="block w-5 h-5 bg-sand-100 rounded-full shadow-md translate-x-0.5 translate-y-0.5 transition-transform"></span>
+                    </div>
+                </label>
+            </div>
+
+            <div class="flex flex-col gap-3">
+                <button type="submit" class="w-full bg-sand-100 text-cyprus-700 font-display font-bold rounded-xl py-4 hover:bg-sand-200 transition-colors">
+                    Save Changes
+                </button>
+                <a href="{% url 'vendor:vendor_menu' %}" class="w-full text-center border border-sand-100/20 text-sand-100 font-display font-bold rounded-xl py-4 hover:border-sand-100/40 transition-colors">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+    </div>
+
+    <script src="{% static 'src/js/base/image_preview.js' %}"></script>
 {% endblock content %}
