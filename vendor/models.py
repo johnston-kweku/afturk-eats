@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 from order.models import Category
 
 
@@ -34,3 +35,40 @@ class MenuItem(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.vendor.business_name})"
+
+
+class OpeningHours(models.Model):
+    class Day(models.IntegerChoices):
+        MONDAY = 0, 'Monday'
+        TUESDAY = 1, 'Tuesday'
+        WEDNESDAY = 2, 'Wednesday'
+        THURSDAY = 3, 'Thursday'
+        FRIDAY = 4, 'Friday'
+        SATURDAY = 5, 'Saturday'
+        SUNDAY = 6, 'Sunday'
+
+    vendor = models.ForeignKey(VendorProfile, on_delete=models.CASCADE, related_name='opening_hours')
+    day = models.IntegerField(choices=Day.choices)
+    open_time = models.TimeField(null=True, blank=True)
+    close_time = models.TimeField(null=True, blank=True)
+    is_closed = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('vendor', 'day')
+        ordering = ['day']
+
+    def __str__(self):
+        return f"{self.get_day_display()} — {self.vendor.business_name}"
+
+
+    def is_currently_open(self):
+        if not self.is_online:
+            return False
+
+        now = timezone.localtime()
+        today_hours = self.opening_hours.filter(day=now.weekday()).first()
+
+        if not today_hours or today_hours.is_closed:
+            return False
+
+        return today_hours.open_time <= now.time() <= today_hours.close_time

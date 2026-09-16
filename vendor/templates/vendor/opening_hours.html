@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="w-11/12 md:w-6/12 flex flex-col gap-6 pb-12">
+
+        <a href="{% url 'vendor:vendor_settings' %}" class="flex items-center gap-2 text-sand-100/60 hover:text-sand-100 font-sans text-sm w-fit transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+            Back to Settings
+        </a>
+
+        <div class="flex flex-col gap-1">
+            <h1 class="text-sand-100 font-display font-bold text-2xl md:text-3xl">
+                Opening Hours
+            </h1>
+            <p class="text-sand-100/40 font-light text-sm">
+                Set when your store is open to receive orders
+            </p>
+        </div>
+
+        <form method="post" class="w-full flex flex-col gap-6">
+            {% csrf_token %}
+            {{ formset.management_form }}
+
+            <div class="w-full flex flex-col gap-3">
+                {% for form in formset %}
+                    <div class="w-full border border-sand-100/10 bg-white/5 backdrop-blur-md rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+                        {{ form.id }}
+
+                        <p class="text-sand-100 font-display font-semibold w-24 shrink-0">
+                            {{ form.instance.get_day_display }}
+                        </p>
+
+                        <div class="flex items-center gap-3 flex-1">
+                            {{ form.open_time }}
+                            <span class="text-sand-100/40 text-sm shrink-0">to</span>
+                            {{ form.close_time }}
+                        </div>
+
+                        <label class="relative inline-flex items-center gap-2 cursor-pointer shrink-0">
+                            {{ form.is_closed }}
+                            <span class="text-sand-100/60 text-sm font-light">Closed</span>
+                        </label>
+
+                        {% if form.non_field_errors %}
+                            <p class="text-red-600 text-xs font-light w-full">{{ form.non_field_errors.0 }}</p>
+                        {% endif %}
+                        {% if form.open_time.errors %}
+                            <p class="text-red-600 text-xs font-light w-full">{{ form.open_time.errors.0 }}</p>
+                        {% endif %}
+                        {% if form.close_time.errors %}
+                            <p class="text-red-600 text-xs font-light w-full">{{ form.close_time.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if formset.non_form_errors %}
+                <p class="text-red-600 text-xs font-light">{{ formset.non_form_errors.0 }}</p>
+            {% endif %}
+
+            <button type="submit" class="w-full bg-sand-100 text-cyprus-700 font-display font-bold rounded-xl py-4 hover:bg-sand-200 transition-colors">
+                Save Opening Hours
+            </button>
+        </form>
+    </div>
+{% endblock content %}

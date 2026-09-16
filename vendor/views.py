@@ -4,14 +4,19 @@ from django.views.decorators.http import require_POST
 from accounts.decorators import role_required
 from accounts.helpers import get_dashboard_url
 from accounts.models import User
-from .forms import MenuItemForm
-from .models import MenuItem
+from .forms import MenuItemForm, OpeningHoursFormSet
+from .models import MenuItem, OpeningHours
 # Create your views here.
 
 
 @role_required(User.Role.VENDOR)
 def vendor_dashboard(request):
     return render(request, 'vendor/vendor_dashboard.html')
+
+
+@role_required(User.Role.VENDOR)
+def vendor_settings(request):
+    return render(request, 'vendor/settings.html')
 
 
 @role_required(User.Role.VENDOR)
@@ -86,3 +91,21 @@ def toggle_item_availability(request, item_id):
     menu_item.is_available = not menu_item.is_available
     menu_item.save()
     return redirect('vendor:vendor_menu')
+
+
+
+
+@role_required(User.Role.VENDOR)
+def vendor_opening_hours(request):
+    vendor_profile = request.user.vendorprofile
+    queryset = OpeningHours.objects.filter(vendor=vendor_profile)
+
+    if request.method == 'POST':
+        formset = OpeningHoursFormSet(request.POST, queryset=queryset)
+        if formset.is_valid():
+            formset.save()
+            return redirect('vendor:vendor_settings')
+    else:
+        formset = OpeningHoursFormSet(queryset=queryset)
+
+    return render(request, 'vendor/opening_hours.html', {'formset': formset})

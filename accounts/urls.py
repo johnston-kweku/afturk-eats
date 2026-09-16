@@ -13,5 +13,5 @@ urlpatterns = [
     path('invite/invalid/', views.invalid_invite, name='invalid_invite'),
     path('register/', views.user_registration, name='user_registration'),
     path('logout/', views.logout_view, name='logout'),
-    path('toggle/active/', views.toggle_online_status, name='toggle_status')
+    path('toggle/active/', views.toggle_online_status, name='toggle_status'),
 ]

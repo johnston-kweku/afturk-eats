@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 from .models import Invitation, User
 from rider.models import RiderProfile
 from customer.models import CustomerProfile
-from vendor.models import VendorProfile
+from vendor.models import VendorProfile, OpeningHours
 import re
 
 def create_token(created_by, role):
@@ -108,6 +108,8 @@ def _handle_vendor_sign_up(
         )
 
         vendor_profile.category.set(category_ids)
+        for day_value, _ in OpeningHours.Day.choices:
+            OpeningHours.objects.create(vendor=vendor_profile, day=day_value, is_closed=True)
 
     return user, vendor_profile
 
