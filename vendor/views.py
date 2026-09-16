@@ -55,7 +55,7 @@ def add_menu_item(request):
 @role_required(User.Role.VENDOR)
 def edit_menu_item(request, item_id):
     vendor_profile = request.user.vendorprofile
-    menu_item = get_object_or_404(MenuItem, id=item_id, vendor=request.vendor_profile)
+    menu_item = get_object_or_404(MenuItem, id=item_id, vendor=vendor_profile)
     if request.method == 'POST':
         form = MenuItemForm(request.POST, request.FILES, instance=menu_item, vendor_profile=vendor_profile)
         if form.is_valid():
