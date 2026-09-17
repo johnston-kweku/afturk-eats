@@ -8,3 +8,6 @@ from rider.models import RiderProfile
 
 def admin_dashboard(request):
     return render(request, 'console/admin_dashboard.html')
+
+
+def application_review(request): pass
