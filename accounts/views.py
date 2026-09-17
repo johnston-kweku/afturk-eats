@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib.auth import logout, authenticate, login
@@ -14,7 +16,7 @@ from order.models import Category
 from rider.models import RiderProfile
 from .decorators import role_required
 from .models import Invitation, User
-import uuid
+from .forms import UserInfoForm
 from .helpers import (
     create_token, 
     _handle_customer_sign_up, 
@@ -370,3 +372,52 @@ def toggle_online_status(request):
 
 
     return redirect(get_dashboard_url(user))
+
+
+
+@login_required
+def accounts_settings(request):
+    return render(request, 'accounts/settings.html')
+
+
+@login_required
+@require_POST
+def reset_password(request):
+    form = PasswordChangeForm(request.user, request.POST)
+    if form.is_valid():
+        form.save()
+        update_session_auth_hash(request, form.user)
+        return JsonResponse({
+            'success': True,
+            'message': 'Password has been changed successfully.'
+        })
+
+
+    return JsonResponse({
+        'success': False,
+        'errors': {
+            field: errors[0] 
+            for field, errors in form.errors.items()
+        }
+    }, status=400)
+
+
+
+@require_POST
+@login_required
+def update_personal_info(request):
+    form = UserInfoForm(request.POST, instance=request.user)
+    if form.is_valid():
+        form.save()
+        return JsonResponse({
+            'success': True,
+            'message': 'Details updated successfully'
+        })
+
+    return JsonResponse({
+        'success': False,
+        'errors': {
+            field: errors[0]
+            for field, errors in form.errors.items()
+        }
+    })
