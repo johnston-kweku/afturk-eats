@@ -11,3 +11,8 @@ def admin_dashboard(request):
 
 
 def application_review(request): pass
+
+
+
+def admin_settings(request):
+    return render(request, 'console/settings.html')

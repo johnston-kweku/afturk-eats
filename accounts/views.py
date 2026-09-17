@@ -403,21 +403,18 @@ def reset_password(request):
 
 
 
-@require_POST
+
 @login_required
 def update_personal_info(request):
-    form = UserInfoForm(request.POST, instance=request.user)
-    if form.is_valid():
-        form.save()
-        return JsonResponse({
-            'success': True,
-            'message': 'Details updated successfully'
-        })
+    if request.method == 'POST':
+        form = UserInfoForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:update_personal_info')
+        
+    else:
+        form = UserInfoForm(instance=request.user)
 
-    return JsonResponse({
-        'success': False,
-        'errors': {
-            field: errors[0]
-            for field, errors in form.errors.items()
-        }
+    return render(request, 'accounts/edit_personal_info.html', {
+        'form': form,
     })

@@ -1,5 +1,6 @@
 from django.db import transaction
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from .models import Invitation, User
 from rider.models import RiderProfile
@@ -159,3 +160,18 @@ def get_dashboard_url(user):
         return reverse('console:admin_dashboard')
 
     return reverse('accounts:home')
+
+
+
+
+@login_required
+def fetch_role_settings_page(user):
+    if user.role == User.Role.ADMIN: return reverse('console:settings')
+
+    if user.role == User.Role.VENDOR: return reverse('vendor:settings')
+
+    if user.role == User.Role.RIDER: return reverse('rider:settings')
+
+    if user.role == User.Role.CUSTOMER: return reverse('customer:settings')
+
+    return reverse('accounts:update_personal_info')

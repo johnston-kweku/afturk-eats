@@ -6,3 +6,9 @@ from accounts.models import User
 @role_required(User.Role.RIDER)
 def rider_dashboard(request):
     return render(request, 'rider/dashboard.html')
+
+
+
+@role_required(User.Role.RIDER)
+def rider_settings(request):
+    return render(request, 'rider/settings.html')

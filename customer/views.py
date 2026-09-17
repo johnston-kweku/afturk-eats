@@ -7,3 +7,9 @@ from accounts.models import User
 @role_required(User.Role.CUSTOMER)
 def customer_dashboard(request):
     return render(request, 'customer/customer_dashboard.html')
+
+
+
+@role_required(User.Role.CUSTOMER)
+def customer_settings(request):
+    return render(request, 'customer/settings.html')
