@@ -8,7 +8,9 @@ def rider_dashboard(request):
     return render(request, 'rider/dashboard.html')
 
 
-
 @role_required(User.Role.RIDER)
 def rider_settings(request):
-    return render(request, 'rider/settings.html')
+    rider_profile = request.user.riderprofile
+    return render(request, 'rider/settings.html', {
+        'rider_profile': rider_profile,
+    })

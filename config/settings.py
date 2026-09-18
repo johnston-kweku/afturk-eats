@@ -33,6 +33,7 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -164,3 +165,11 @@ SMS_SENDER_ID = os.getenv('SMS_SENDER_ID', 'Afturk')
 
 
 LOGOUT_REDIRECT_URL = 'accounts:login'
+
+
+
+
+
+CSRF_TRUSTED_ORIGINS = [
+    os.getenv('CSRF_TRUSTED_ORIGINS')
+]

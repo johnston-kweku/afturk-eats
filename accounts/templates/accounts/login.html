@@ -28,6 +28,12 @@
                         {{ errors.account_deactivated }}
                     </p>
                 </span>
+            {% elif errors.pending_approval %}
+                <span class="w-full flex items-center justify-center">
+                    <p class="text-red-600 font-light text-xs">
+                        {{ errors.pending_approval }}
+                    </p>
+                </span>
             {% endif %}
             <!-- Username -->
             <span class="flex flex-col items-start mt-3 gap-1">

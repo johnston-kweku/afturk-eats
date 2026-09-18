@@ -411,6 +411,9 @@
   .h-10 {
     height: calc(var(--spacing) * 10);
   }
+  .h-14 {
+    height: calc(var(--spacing) * 14);
+  }
   .h-24 {
     height: calc(var(--spacing) * 24);
   }
@@ -452,6 +455,9 @@
   }
   .w-11\/12 {
     width: calc(11 / 12 * 100%);
+  }
+  .w-14 {
+    width: calc(var(--spacing) * 14);
   }
   .w-24 {
     width: calc(var(--spacing) * 24);
@@ -689,6 +695,12 @@
       border-color: color-mix(in oklab, var(--color-sand-100) 20%, transparent);
     }
   }
+  .border-sand-100\/30 {
+    border-color: color-mix(in srgb, #f0ede4 30%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-sand-100) 30%, transparent);
+    }
+  }
   .border-sand-100\/40 {
     border-color: color-mix(in srgb, #f0ede4 40%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -810,6 +822,13 @@
     --tw-gradient-position: to bottom;
     @supports (background-image: linear-gradient(in lab, red, red)) {
       --tw-gradient-position: to bottom in oklab;
+    }
+    background-image: linear-gradient(var(--tw-gradient-stops));
+  }
+  .bg-linear-to-br {
+    --tw-gradient-position: to bottom right;
+    @supports (background-image: linear-gradient(in lab, red, red)) {
+      --tw-gradient-position: to bottom right in oklab;
     }
     background-image: linear-gradient(var(--tw-gradient-stops));
   }
@@ -1325,6 +1344,9 @@
       --tw-ring-color: color-mix(in oklab, var(--color-cyprus-500) 40%, transparent);
     }
   }
+  .focus\:ring-sand-100:focus {
+    --tw-ring-color: var(--color-sand-100);
+  }
   .focus\:ring-sand-100\/10:focus {
     --tw-ring-color: color-mix(in srgb, #f0ede4 10%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -1335,6 +1357,21 @@
     --tw-ring-color: color-mix(in srgb, #f0ede4 30%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       --tw-ring-color: color-mix(in oklab, var(--color-sand-100) 30%, transparent);
+    }
+  }
+  .focus\:ring-sand-200:focus {
+    --tw-ring-color: var(--color-sand-200);
+  }
+  .focus\:ring-sand-200\/3:focus {
+    --tw-ring-color: color-mix(in srgb, #e6e0d1 3%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      --tw-ring-color: color-mix(in oklab, var(--color-sand-200) 3%, transparent);
+    }
+  }
+  .focus\:ring-sand-200\/30:focus {
+    --tw-ring-color: color-mix(in srgb, #e6e0d1 30%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      --tw-ring-color: color-mix(in oklab, var(--color-sand-200) 30%, transparent);
     }
   }
   .focus\:outline-none:focus {

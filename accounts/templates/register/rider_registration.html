@@ -180,7 +180,7 @@
                     {% endif %}
                 </span>
                 <span class="flex flex-col mt-3 w-full">
-                    <label for="date_of_birth" class="text-sm font-light text-sand-100">Date Of Birth <span class="text-sand-100/40 text-xs">(If you are a student)</span></label>
+                    <label for="date_of_birth" class="text-sm font-light text-sand-100">Date Of Birth</label>
                     <input type="date" required name="date_of_birth"  id="date_of_birth" value="{{ data.date_of_birth|default:'' }}" class="outline-none border focus:ring-1 focus:ring-sand-100/30 border-sand-200/10 rounded-xl px-2 py-3 w-full placeholder:text-sand-100/30 text-sand-100 placeholder:text-sm caret-sand-100 placeholder:font-light">
                     {% if errors.date_of_birth %}
                         <p class="text-xs font-light text-red-600">

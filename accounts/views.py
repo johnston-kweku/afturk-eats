@@ -90,10 +90,9 @@ def invite_link(request):
 def invalid_invite(request):
     return render(request, 'errors/invalid_invite.html')
 
-
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect(request.user.get_dashboard_url())  
+        return redirect(request.user.get_dashboard_url())
 
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
@@ -105,28 +104,37 @@ def login_view(request):
         if errors:
             return render(request, 'accounts/login.html', {'username': username, 'errors': errors, 'data': request.POST})
 
-        user = authenticate(request, username=username, password=password)
+        user_obj = User.objects.filter(username=username).first()
 
-        if user is None:
+        if user_obj and not user_obj.check_password(password):
             errors['user_does_not_exist'] = 'Password or username is incorrect.'
             return render(request, 'accounts/login.html', {'username': username, 'errors': errors, 'data': request.POST})
 
-        if not user.is_active:
-            errors['account_deactivated'] = 'This account has been deactivated. Please contact support'
-            return render(request, 'accounts/login.html', {'username': username})
+        if not user_obj:
+            errors['user_does_not_exist'] = 'Password or username is incorrect.'
 
+            return render(request, 'accounts/login.html', {'username': username, 'errors': errors, 'data': request.POST})
+
+        if not user_obj.is_active:
+            is_approved = None
+            if user_obj.is_vendor():
+                is_approved = user_obj.vendorprofile.is_approved
+            elif user_obj.is_rider():
+                is_approved = user_obj.riderprofile.is_approved
+
+            if is_approved is False:
+                errors['pending_approval'] = 'Your account is pending admin approval.'
+            else:
+                errors['account_deactivated'] = 'This account has been deactivated. Please contact support.'
+
+            return render(request, 'accounts/login.html', {'username': username, 'errors': errors, 'data': request.POST})
+
+        user = authenticate(request, username=username, password=password)
         login(request, user)
 
-        # Role-based redirect
-        if user.role == User.Role.RIDER: return redirect(user.get_dashboard_url())
-        elif user.role == User.Role.VENDOR: return redirect(user.get_dashboard_url())
-        elif user.role == User.Role.CUSTOMER: return redirect(user.get_dashboard_url())
-        elif user.role == User.Role.ADMIN: return redirect(user.get_dashboard_url())
-
-        return redirect('accounts:home')  # fallback
+        return redirect(user.get_dashboard_url())
 
     return render(request, 'accounts/login.html', {'username': ''})
-
 
 def logout_view(request):
     if request.user.is_authenticated:
@@ -251,7 +259,7 @@ def user_registration(request):
             ghana_card_number = request.POST.get('ghana_card_number', '').strip()
             ghana_card_image = request.FILES.get('ghana_card_image', '')
             profile_image = request.FILES.get('profile_image', '')
-            student_id_number = request.POST.get('student_id_number', '')
+            student_id_number = request.POST.get('student_id_number', '').strip() or None
             is_student = request.POST.get('is_student', False) == 'on'
             vehicle_type = request.POST.get('vehicle_type', '')
             date_of_birth = request.POST.get('date_of_birth', '')
@@ -267,6 +275,8 @@ def user_registration(request):
             if is_student and not student_id_number: errors['student_id_number'] = 'Student ID is required for riders who are also students.'
             if not vehicle_type: errors['vehicle_type'] = 'Please select type of vehicle'
             if not date_of_birth: errors['date_of_birth'] = 'Date of birth is required'
+            if is_student and RiderProfile.objects.filter(student_id_number=student_id_number).exists():
+                errors['student_id_number'] = 'This id exists already'
 
 
 
@@ -332,7 +342,8 @@ def user_registration(request):
             invitation.used_by = user
             invitation.save()
 
-            return redirect('accounts:pending_approval')
+            url = reverse('accounts:pending_approval')
+            return redirect(f'{url}?role={registration_role}')
 
         if registration_role == User.Role.ADMIN:
             user = _handle_admin_sign_up(
