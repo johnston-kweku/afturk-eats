@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.utils import timezone
+from django.urls import reverse
 from datetime import timedelta
 import random
 import string
@@ -58,6 +59,39 @@ class User(AbstractUser):
         self.email = self.email.strip() or None if self.email else None
 
         super().save(*args, **kwargs)
+
+
+
+
+
+
+    def get_dashboard_url(user):        
+        if user.role == User.Role.CUSTOMER:
+            return reverse('customer:customer_dashboard')
+
+        if user.role == User.Role.RIDER:
+            return reverse('rider:rider_dashboard')
+
+        if user.role == User.Role.VENDOR:
+            return reverse('vendor:vendor_dashboard')
+
+        if user.role == User.Role.ADMIN:
+            return reverse('console:admin_dashboard')
+
+        return reverse('accounts:home')
+
+
+
+    def get_settings_url(user):
+        if user.role == User.Role.ADMIN: return reverse('console:settings')
+
+        if user.role == User.Role.VENDOR: return reverse('vendor:settings')
+
+        if user.role == User.Role.RIDER: return reverse('rider:settings')
+
+        if user.role == User.Role.CUSTOMER: return reverse('customer:settings')
+
+        return reverse('accounts:update_personal_info')
 
 
 def default_expiry():

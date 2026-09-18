@@ -19,8 +19,7 @@ from .models import Invitation, User
 from .forms import UserInfoForm
 from .helpers import (
     create_token, 
-    _handle_customer_sign_up, 
-    get_dashboard_url, 
+    _handle_customer_sign_up,  
     _handle_rider_sign_up, 
     _handle_vendor_sign_up,
     _handle_admin_sign_up,
@@ -94,7 +93,7 @@ def invalid_invite(request):
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect('accounts:home')  
+        return redirect(request.user.get_dashboard_url())  
 
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
@@ -119,30 +118,39 @@ def login_view(request):
         login(request, user)
 
         # Role-based redirect
-        if user.role == User.Role.RIDER:
-            return redirect(get_dashboard_url(user))
-        elif user.role == User.Role.VENDOR:
-            return redirect(get_dashboard_url(user))
-        elif user.role == User.Role.CUSTOMER:
-            return redirect(get_dashboard_url(user))
-        elif user.role == User.Role.ADMIN:
-            return redirect(get_dashboard_url(user))
+        if user.role == User.Role.RIDER: return redirect(user.get_dashboard_url())
+        elif user.role == User.Role.VENDOR: return redirect(user.get_dashboard_url())
+        elif user.role == User.Role.CUSTOMER: return redirect(user.get_dashboard_url())
+        elif user.role == User.Role.ADMIN: return redirect(user.get_dashboard_url())
 
         return redirect('accounts:home')  # fallback
 
     return render(request, 'accounts/login.html', {'username': ''})
 
 
-
 def logout_view(request):
+    if request.user.is_authenticated:
+        if request.user.is_vendor():
+            profile = request.user.vendorprofile
+            if profile.is_online:
+                profile.is_online = False
+                profile.last_seen_at = timezone.now()
+                profile.save()
+
+        elif request.user.is_rider():
+            profile = request.user.riderprofile
+            if profile.is_online:
+                profile.is_online = False
+                profile.last_seen_at = timezone.now()
+                profile.save()
+
     logout(request)
     return redirect('accounts:login')
 
 
 
 def user_registration(request):
-    if request.user.is_authenticated:
-        return redirect(get_dashboard_url(request.user))
+    if request.user.is_authenticated: return redirect(request.user.get_dashboard_url())
 
     customer_template_path = 'register/customer_registration.html'
     rider_template_path = 'register/rider_registration.html'
@@ -236,7 +244,7 @@ def user_registration(request):
             )
 
             login(request, user)
-            return redirect(get_dashboard_url(user))
+            return redirect(user.get_dashboard_url())
 
 
         if registration_role == User.Role.RIDER:
@@ -289,7 +297,8 @@ def user_registration(request):
             invitation.is_used = True
             invitation.used_by = user
             invitation.save()
-            return redirect(f'{reverse('accounts:pending_approval')}?role={registration_role}')
+            url = reverse('accounts:pending_approval')
+            return redirect(f'{url}?role={registration_role}')
 
         if registration_role == User.Role.VENDOR:
             business_name = request.POST.get('business_name', '').strip()
@@ -338,7 +347,8 @@ def user_registration(request):
             invitation.used_by = user
             invitation.save()
             login(request, user)
-            return redirect(get_dashboard_url(user))
+
+            return redirect(user.get_dashboard_url())
         
 
 
@@ -351,7 +361,7 @@ def pending_approval(request):
 
 
 @require_POST
-@login_required
+@role_required(User.Role.RIDER, User.Role.VENDOR)
 def toggle_online_status(request):
     user = request.user
 
@@ -359,8 +369,7 @@ def toggle_online_status(request):
         profile = user.riderprofile
     elif user.is_vendor():
         profile = user.vendorprofile
-    else:
-        return redirect(get_dashboard_url(user))
+
 
     profile.is_online = not profile.is_online
     profile.last_seen_at = timezone.now()
@@ -369,9 +378,8 @@ def toggle_online_status(request):
     next_url = request.META.get('HTTP_REFERER')
     if next_url:
         return HttpResponseRedirect(next_url)
+    return redirect(user.get_dashboard_url())
 
-
-    return redirect(get_dashboard_url(user))
 
 
 
@@ -381,25 +389,27 @@ def accounts_settings(request):
 
 
 @login_required
-@require_POST
 def reset_password(request):
-    form = PasswordChangeForm(request.user, request.POST)
-    if form.is_valid():
-        form.save()
-        update_session_auth_hash(request, form.user)
-        return JsonResponse({
-            'success': True,
-            'message': 'Password has been changed successfully.'
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        next_url = request.POST.get('next') or request.user.get_settings_url()
+
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            return redirect(next_url)
+
+        return render(request, 'accounts/reset_password.html', {
+            'form': form,
+            'next': next_url,
         })
 
-
-    return JsonResponse({
-        'success': False,
-        'errors': {
-            field: errors[0] 
-            for field, errors in form.errors.items()
-        }
-    }, status=400)
+    next_url = request.GET.get('next') or request.META.get('HTTP_REFERER') or request.user.get_settings_url()
+    form = PasswordChangeForm(request.user)
+    return render(request, 'accounts/reset_password.html', {
+        'form': form,
+        'next': next_url,
+    })
 
 
 
@@ -410,7 +420,7 @@ def update_personal_info(request):
         form = UserInfoForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('accounts:update_personal_info')
+            return redirect(request.user.get_settings_url())
         
     else:
         form = UserInfoForm(instance=request.user)

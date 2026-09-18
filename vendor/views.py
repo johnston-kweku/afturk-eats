@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from accounts.decorators import role_required
-from accounts.helpers import get_dashboard_url
 from accounts.models import User
 from .forms import MenuItemForm, OpeningHoursFormSet
 from .models import MenuItem, OpeningHours
@@ -13,11 +12,13 @@ from .models import MenuItem, OpeningHours
 def vendor_dashboard(request):
     return render(request, 'vendor/vendor_dashboard.html')
 
-
+@login_required
 @role_required(User.Role.VENDOR)
 def vendor_settings(request):
-    return render(request, 'vendor/settings.html')
-
+    vendor_profile = request.user.vendorprofile
+    return render(request, 'vendor/settings.html', {
+        'vendor_profile': vendor_profile,
+    })
 
 @role_required(User.Role.VENDOR)
 def vendor_menu(request):

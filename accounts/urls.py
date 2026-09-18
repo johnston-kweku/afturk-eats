@@ -14,5 +14,6 @@ urlpatterns = [
     path('register/', views.user_registration, name='user_registration'),
     path('logout/', views.logout_view, name='logout'),
     path('toggle/active/', views.toggle_online_status, name='toggle_status'),
-    path('edit/personal-info/', views.update_personal_info, name='update_personal_info')
+    path('edit/personal-info/', views.update_personal_info, name='update_personal_info'),
+    path('reset/password/', views.reset_password, name='reset_password')
 ]

@@ -141,37 +141,3 @@ def _handle_admin_sign_up(
         )
     return user
 
-
-
-def get_dashboard_url(user):
-    if not user.is_authenticated:
-        return redirect('accounts:login')
-    
-    if user.role == User.Role.CUSTOMER:
-        return reverse('customer:customer_dashboard')
-
-    if user.role == User.Role.RIDER:
-        return reverse('rider:rider_dashboard')
-
-    if user.role == User.Role.VENDOR:
-        return reverse('vendor:vendor_dashboard')
-
-    if user.role == User.Role.ADMIN:
-        return reverse('console:admin_dashboard')
-
-    return reverse('accounts:home')
-
-
-
-
-@login_required
-def fetch_role_settings_page(user):
-    if user.role == User.Role.ADMIN: return reverse('console:settings')
-
-    if user.role == User.Role.VENDOR: return reverse('vendor:settings')
-
-    if user.role == User.Role.RIDER: return reverse('rider:settings')
-
-    if user.role == User.Role.CUSTOMER: return reverse('customer:settings')
-
-    return reverse('accounts:update_personal_info')
