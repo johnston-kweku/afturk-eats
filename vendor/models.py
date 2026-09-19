@@ -20,7 +20,17 @@ class VendorProfile(models.Model):
     def __str__(self):
         return self.user.first_name
 
+    def is_currently_open(self):
+        if not self.is_online:
+            return False
 
+        now = timezone.localtime()
+        today_hours = self.opening_hours.filter(day=now.weekday()).first()
+
+        if not today_hours or today_hours.is_closed:
+            return False
+
+        return today_hours.open_time <= now.time() <= today_hours.close_time
 
 class MenuItem(models.Model):
     vendor = models.ForeignKey(VendorProfile, on_delete=models.CASCADE, related_name='menu_items')
@@ -35,6 +45,21 @@ class MenuItem(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.vendor.business_name})"
+
+
+
+
+class MenuItemVariant(models.Model):
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE, related_name='variants')
+    label = models.CharField(max_length=30)
+    price = models.DecimalField(max_digits=8, decimal_places=2)
+    is_available = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.menu_item.name} - {self.label} (₵{self.price})"
+    
+
+    
 
 
 class OpeningHours(models.Model):
@@ -60,15 +85,3 @@ class OpeningHours(models.Model):
     def __str__(self):
         return f"{self.get_day_display()} — {self.vendor.business_name}"
 
-
-    def is_currently_open(self):
-        if not self.is_online:
-            return False
-
-        now = timezone.localtime()
-        today_hours = self.opening_hours.filter(day=now.weekday()).first()
-
-        if not today_hours or today_hours.is_closed:
-            return False
-
-        return today_hours.open_time <= now.time() <= today_hours.close_time
