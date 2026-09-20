@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import formset_factory, modelformset_factory
-from .models import MenuItem, OpeningHours
+from .models import MenuItem, OpeningHours, MenuItemVariant
 
 
 INPUT_CLASSES = "outline-none border focus:ring-1 focus:ring-sand-100/30 border-sand-200/10 rounded-xl px-2 py-3 w-full placeholder:text-sand-100/30 text-sand-100 placeholder:text-sm caret-sand-100 placeholder:font-light bg-transparent"
@@ -35,6 +35,17 @@ class MenuItemForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if vendor_profile:
             self.fields['category'].queryset = vendor_profile.category.all()
+
+
+
+class MenuItemVariantForm(forms.ModelForm):
+    class Meta:
+        model = MenuItemVariant
+        fields = [
+            'label', 'price', 'is_available'
+        ]
+
+
 
 
 

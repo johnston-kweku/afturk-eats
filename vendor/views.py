@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from accounts.decorators import role_required
 from accounts.models import User
-from .forms import MenuItemForm, OpeningHoursFormSet
+from .forms import MenuItemForm, OpeningHoursFormSet, MenuItemVariantForm
 from .models import MenuItem, OpeningHours
 # Create your views here.
 
@@ -34,6 +34,29 @@ def vendor_menu(request):
         'items_count': items_count
     }
     return render(request, 'vendor/vendor_menu.html', context)
+
+
+@role_required(User.Role.VENDOR)
+def menu_item_variant(request, item_id):
+    menu_item = get_object_or_404(MenuItem.objects.prefetch_related(
+        'variants'
+    ), id=item_id, vendor=request.user.vendorprofile)
+    menu_item_variants = menu_item.variants.all()
+
+    context = {
+        'menu_item': menu_item,
+        'menu_item_variants': menu_item_variants
+    }
+
+    if request.method == 'POST':
+        form = MenuItemVariantForm(request.POST, instance=menu_item_variants)
+        if form.is_valid():
+            form.save()
+            return redirect('vendor:variants', item_id=item_id)
+
+        context['form'] = form
+
+    return render(request, 'vendor/variants.html', context)
 
 
 
