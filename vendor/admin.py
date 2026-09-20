@@ -19,7 +19,7 @@ class VendorProfileAdmin(admin.ModelAdmin):
 @admin.register(MenuItem)
 class MenuItemAdmin(admin.ModelAdmin):
     list_display = [
-        'vendor', 'name', 'category', 'price'
+        'vendor', 'name', 'category'
     ]
 
 

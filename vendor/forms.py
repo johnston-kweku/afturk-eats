@@ -9,7 +9,7 @@ INPUT_CLASSES = "outline-none border focus:ring-1 focus:ring-sand-100/30 border-
 class MenuItemForm(forms.ModelForm):
     class Meta:
         model = MenuItem
-        fields = ['name', 'description', 'price', 'category', 'image', 'is_available']
+        fields = ['name', 'description', 'category', 'image', 'is_available']
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': INPUT_CLASSES,
@@ -19,11 +19,6 @@ class MenuItemForm(forms.ModelForm):
                 'class': INPUT_CLASSES,
                 'rows': 4,
                 'placeholder': 'Briefly describe the dish — ingredients, portion size, what makes it special...',
-            }),
-            'price': forms.NumberInput(attrs={
-                'class': INPUT_CLASSES,
-                'placeholder': '0.00',
-                'step': '0.01',
             }),
             'category': forms.Select(attrs={
                 'class': INPUT_CLASSES,

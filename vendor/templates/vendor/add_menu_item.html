@@ -74,15 +74,6 @@
                     {% endif %}
                 </span>
 
-                <span class="flex flex-col w-full gap-1">
-                    <label for="{{ form.price.id_for_label }}" class="text-sm font-light text-sand-100">
-                        Price (GHS)
-                    </label>
-                    {{ form.price }}
-                    {% if form.price.errors %}
-                        <p class="text-red-600 text-xs font-light">{{ form.price.errors.0 }}</p>
-                    {% endif %}
-                </span>
 
                 <span class="flex flex-col w-full gap-1">
                     <label for="{{ form.description.id_for_label }}" class="text-sm font-light text-sand-100">

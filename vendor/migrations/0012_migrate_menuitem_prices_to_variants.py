@@ -3,6 +3,18 @@
 from django.db import migrations
 
 
+def create_variants_from_prices(apps, schema_editor):
+    MenuItem = apps.get_model('vendor', 'MenuItem')
+    MenuItemVariant = apps.get_model('vendor', 'MenuItemVariant')
+
+    for item in MenuItem.objects.all():
+        MenuItemVariant.objects.create(
+            menu_item=item,
+            price=item.price,
+            label='Small Size'
+        )
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -10,4 +22,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunPython(create_variants_from_prices, migrations.RunPython.noop)
     ]
