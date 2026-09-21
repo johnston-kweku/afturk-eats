@@ -513,6 +513,9 @@
   .animate-ping {
     animation: var(--animate-ping);
   }
+  .cursor-not-allowed {
+    cursor: not-allowed;
+  }
   .cursor-pointer {
     cursor: pointer;
   }
@@ -746,6 +749,12 @@
       background-color: color-mix(in oklab, var(--color-red-600) 10%, transparent);
     }
   }
+  .bg-red-600\/40 {
+    background-color: color-mix(in srgb, oklch(57.7% 0.245 27.325) 40%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-red-600) 40%, transparent);
+    }
+  }
   .bg-sand-50 {
     background-color: var(--color-sand-50);
   }
@@ -968,6 +977,18 @@
     font-size: var(--text-xs);
     line-height: var(--tw-leading, var(--text-xs--line-height));
   }
+  .text-\[0\.1rem\] {
+    font-size: 0.1rem;
+  }
+  .text-\[0\.5rem\] {
+    font-size: 0.5rem;
+  }
+  .text-\[5px\] {
+    font-size: 5px;
+  }
+  .text-\[8px\] {
+    font-size: 8px;
+  }
   .text-\[10px\] {
     font-size: 10px;
   }
@@ -1075,6 +1096,9 @@
   .uppercase {
     text-transform: uppercase;
   }
+  .line-through {
+    text-decoration-line: line-through;
+  }
   .underline {
     text-decoration-line: underline;
   }
@@ -1086,6 +1110,10 @@
   }
   .shadow {
     --tw-shadow: 0 1px 3px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 1px 2px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .shadow-2xl {
+    --tw-shadow: 0 25px 50px -12px var(--tw-shadow-color, rgb(0 0 0 / 0.25));
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
   .shadow-lg {

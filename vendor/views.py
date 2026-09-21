@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
+from django.http import Http404
 from accounts.decorators import role_required
 from accounts.models import User
 from .forms import MenuItemForm, OpeningHoursFormSet, MenuItemVariantForm
-from .models import MenuItem, OpeningHours
+from .models import MenuItem, OpeningHours, MenuItemVariant
 # Create your views here.
 
 
@@ -25,7 +26,10 @@ def vendor_menu(request):
     vendor_profile = request.user.vendorprofile
     menu_items = MenuItem.objects.filter(
         vendor=vendor_profile
+    ).prefetch_related(
+        'variants'
     )
+    
     items_count = menu_items.count()
     business_name = vendor_profile.business_name
     context = {
@@ -37,7 +41,7 @@ def vendor_menu(request):
 
 
 @role_required(User.Role.VENDOR)
-def menu_item_variant(request, item_id):
+def menu_item_variant(request, item_id, variant_id=None):
     menu_item = get_object_or_404(MenuItem.objects.prefetch_related(
         'variants'
     ), id=item_id, vendor=request.user.vendorprofile)
@@ -49,12 +53,24 @@ def menu_item_variant(request, item_id):
     }
 
     if request.method == 'POST':
-        form = MenuItemVariantForm(request.POST, instance=menu_item_variants)
-        if form.is_valid():
-            form.save()
-            return redirect('vendor:variants', item_id=item_id)
+        if variant_id:
+            item_variant = get_object_or_404(MenuItemVariant, id=variant_id, menu_item=menu_item)
 
+            form = MenuItemVariantForm(request.POST, instance=item_variant)
+            if form.is_valid():
+                form.save()
+                return redirect('vendor:variants', item_id=item_id)
+            context['form'] = form
+            return render(request, 'vendor/variants.html', context)
+
+        form = MenuItemVariantForm(request.POST)
+        if form.is_valid():
+            variant = form.save(commit=False)
+            variant.menu_item = menu_item
+            variant.save()
+            return redirect('vendor:variants', item_id=item_id)
         context['form'] = form
+        return render(request, 'vendor/variants.html', context)
 
     return render(request, 'vendor/variants.html', context)
 

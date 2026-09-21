@@ -12,5 +12,6 @@ urlpatterns = [
     path('toggle/available/<int:item_id>/', views.toggle_item_availability, name='toggle_item_availability'),
     path('settings/', views.vendor_settings, name='settings'),
     path('edit/opening-hours/', views.vendor_opening_hours, name='edit_opening_hours'),
-    path('variants/<int:item_id>/', views.menu_item_variant, name='variants')
+    path('variants/<int:item_id>/', views.menu_item_variant, name='variants'),
+    path('variants/<int:item_id>/edit/<int:variant_id>/', views.menu_item_variant, name='edit_variant'),
 ]

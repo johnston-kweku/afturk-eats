@@ -24,7 +24,7 @@
 
         <div class="w-full flex flex-col gap-4 py-8">
             {% for item in menu_items %}
-                <div class="w-full bg-white/5 backdrop-blur-md flex items-stretch border border-sand-100/10 rounded-xl overflow-hidden">
+                <div onclick="window.location.href=`{% url 'vendor:variants' item.id %}`" class="w-full bg-white/5 backdrop-blur-md flex cursor-pointer active:scale-95 transition-all duration-500 items-stretch border border-sand-100/10 rounded-xl overflow-hidden">
 
                     <div class="w-32 sm:w-40 shrink-0">
                         {% if item.image %}
@@ -43,9 +43,17 @@
                             <p class="text-sand-100 font-display font-bold text-base truncate">
                                 {{ item.name }}
                             </p>
-                            <p class="text-sand-100 font-display font-bold text-base shrink-0">
-                                GHS {{ item.price }}
-                            </p>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            {% for variant in item.variants.all %}
+                                <p class="font-display font-light text-[10px] px-2 py-1 {% if variant.is_available %} bg-sand-100 text-cyprus-700 {% else %} line-through bg-white/10  text-sand-100 {% endif %} backdrop-blur-md shadow-2xl rounded-full shrink-0">
+                                    GHS {{ variant.price }}
+                                </p>
+                            {% empty %}
+                                <p class="text-sand-100 font-display font-light text-[10px] px-2 py-1 bg-white/5 backdrop-blur-md shadow-2xl rounded-full shrink-0">
+                                    No prices set
+                                </p>
+                            {% endfor %}
                         </div>
 
                         <p class="text-sand-100/40 font-light text-sm line-clamp-2">
