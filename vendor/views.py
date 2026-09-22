@@ -29,7 +29,7 @@ def vendor_menu(request):
     ).prefetch_related(
         'variants'
     )
-    
+
     items_count = menu_items.count()
     business_name = vendor_profile.business_name
     context = {
@@ -47,20 +47,30 @@ def menu_item_variant(request, item_id, variant_id=None):
     ), id=item_id, vendor=request.user.vendorprofile)
     menu_item_variants = menu_item.variants.all()
 
+    variant_forms = [MenuItemVariantForm(instance=v) for v in menu_item_variants]
+    add_form = MenuItemVariantForm()
+
     context = {
         'menu_item': menu_item,
-        'menu_item_variants': menu_item_variants
+        'menu_item_variants': menu_item_variants,
+        'add_form': add_form
     }
 
     if request.method == 'POST':
         if variant_id:
             item_variant = get_object_or_404(MenuItemVariant, id=variant_id, menu_item=menu_item)
-
             form = MenuItemVariantForm(request.POST, instance=item_variant)
+            variant_forms = []
+            for variant in menu_item_variants:
+                if variant.pk == item_variant.pk:
+                    variant_forms.append(form)
+                else:
+                    variant_forms.append(MenuItemVariantForm(instance=variant))
             if form.is_valid():
                 form.save()
                 return redirect('vendor:variants', item_id=item_id)
             context['form'] = form
+            context['variant_forms'] = variant_forms
             return render(request, 'vendor/variants.html', context)
 
         form = MenuItemVariantForm(request.POST)
@@ -69,9 +79,11 @@ def menu_item_variant(request, item_id, variant_id=None):
             variant.menu_item = menu_item
             variant.save()
             return redirect('vendor:variants', item_id=item_id)
-        context['form'] = form
+        context['variant_forms'] = variant_forms
+        context['add_form'] = form
         return render(request, 'vendor/variants.html', context)
 
+    context['variant_forms'] = variant_forms
     return render(request, 'vendor/variants.html', context)
 
 

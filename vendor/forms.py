@@ -36,14 +36,24 @@ class MenuItemForm(forms.ModelForm):
         if vendor_profile:
             self.fields['category'].queryset = vendor_profile.category.all()
 
-
-
 class MenuItemVariantForm(forms.ModelForm):
     class Meta:
         model = MenuItemVariant
-        fields = [
-            'label', 'price', 'is_available'
-        ]
+        fields = ['label', 'price', 'is_available']
+        widgets = {
+            'label': forms.TextInput(attrs={
+                'class': INPUT_CLASSES,
+                'placeholder': 'e.g. Small, Regular, Large',
+            }),
+            'price': forms.NumberInput(attrs={
+                'class': INPUT_CLASSES,
+                'placeholder': '0.00',
+                'step': '0.01',
+            }),
+            'is_available': forms.CheckboxInput(attrs={
+                'class': 'peer sr-only',
+            }),
+        }
 
 
 

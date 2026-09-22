@@ -1,14 +1,12 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
-from django.db import transaction
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.utils import timezone
@@ -131,6 +129,16 @@ def login_view(request):
 
         user = authenticate(request, username=username, password=password)
         login(request, user)
+        if user.role == User.Role.VENDOR:
+            vendor_profile = user.vendorprofile
+            vendor_profile.is_online = True
+            vendor_profile.save()
+
+        if user.role == User.Role.RIDER:
+            rider_profile = user.riderprofile
+            rider_profile.is_online == True
+            rider_profile.save()
+            
 
         return redirect(user.get_dashboard_url())
 

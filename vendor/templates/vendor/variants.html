@@ -1,4 +1,143 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="w-11/12 md:w-6/12 flex flex-col pt-18 gap-6 pb-12">
+
+    <a href="{% url 'vendor:vendor_menu' %}" class="flex items-center gap-2 text-sand-100/60 hover:text-sand-100 font-sans text-sm w-fit transition-colors">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+        Back to Menu
+    </a>
+
+    <div class="flex flex-col gap-1">
+        <h1 class="text-sand-100 font-display font-bold text-2xl md:text-3xl">
+            {{ menu_item.name }}
+        </h1>
+        <p class="text-sand-100/40 font-light text-sm">
+            Manage prices and sizes for this item
+        </p>
+    </div>
+
+    <!-- Existing variants -->
+    <div class="w-full flex flex-col gap-4">
+        {% for form in variant_forms %}
+            <form
+                method="post"
+                action="{% url 'vendor:edit_variant' item_id=menu_item.id variant_id=form.instance.id %}"
+                class="w-full border border-sand-100/10 bg-white/5 backdrop-blur-md rounded-2xl p-5 flex flex-col gap-4"
+            >
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <p class="text-red-500 text-xs font-light">{{ form.non_field_errors.0 }}</p>
+                {% endif %}
+
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <span class="flex flex-col flex-1 gap-1">
+                        <label for="{{ form.label.id_for_label }}" class="text-sm font-light text-sand-100">
+                            Label
+                        </label>
+                        {{ form.label }}
+                        {% if form.label.errors %}
+                            <p class="text-red-500 text-xs font-light">{{ form.label.errors.0 }}</p>
+                        {% endif %}
+                    </span>
+
+                    <span class="flex flex-col flex-1 gap-1">
+                        <label for="{{ form.price.id_for_label }}" class="text-sm font-light text-sand-100">
+                            Price (GHS)
+                        </label>
+                        {{ form.price }}
+                        {% if form.price.errors %}
+                            <p class="text-red-500 text-xs font-light">{{ form.price.errors.0 }}</p>
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex flex-col gap-1">
+                        <label for="{{ form.is_available.id_for_label }}" class="text-sm font-light text-sand-100">
+                            Available
+                        </label>
+                        <label class="relative inline-flex items-center cursor-pointer w-fit">
+                            {{ form.is_available }}
+                            <div class="w-11 h-6 bg-sand-100/20 rounded-full peer peer-checked:bg-cyprus-100 peer-checked:[&>span]:translate-x-5 transition-colors">
+                                <span class="block w-5 h-5 bg-sand-100 rounded-full shadow-md translate-x-0.5 translate-y-0.5 transition-transform"></span>
+                            </div>
+                        </label>
+                        {% if form.is_available.errors %}
+                            <p class="text-red-500 text-xs font-light">{{ form.is_available.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="bg-sand-100 text-cyprus-700 font-display font-bold rounded-lg px-4 py-2 text-sm hover:bg-sand-200 transition-colors">
+                        Save
+                    </button>
+                </div>
+            </form>
+        {% empty %}
+            <p class="text-sand-100/40 font-light text-sm text-center py-8">
+                No variants yet — add your first price below.
+            </p>
+        {% endfor %}
+    </div>
+
+    <!-- Add new variant -->
+    <div class="w-full border border-sand-100/10 bg-white/5 backdrop-blur-md rounded-2xl p-5 flex flex-col gap-4">
+        <p class="text-sand-100/40 font-display text-xs tracking-wide uppercase">
+            Add a new price
+        </p>
+
+        <form method="post" action="{% url 'vendor:variants' item_id=menu_item.id %}" class="flex flex-col gap-4">
+            {% csrf_token %}
+
+            {% if add_form.non_field_errors %}
+                <p class="text-red-500 text-xs font-light">{{ add_form.non_field_errors.0 }}</p>
+            {% endif %}
+
+            <div class="flex flex-col sm:flex-row gap-4">
+                <span class="flex flex-col flex-1 gap-1">
+                    <label for="{{ add_form.label.id_for_label }}" class="text-sm font-light text-sand-100">
+                        Label
+                    </label>
+                    {{ add_form.label }}
+                    {% if add_form.label.errors %}
+                        <p class="text-red-500 text-xs font-light">{{ add_form.label.errors.0 }}</p>
+                    {% endif %}
+                </span>
+
+                <span class="flex flex-col flex-1 gap-1">
+                    <label for="{{ add_form.price.id_for_label }}" class="text-sm font-light text-sand-100">
+                        Price (GHS)
+                    </label>
+                    {{ add_form.price }}
+                    {% if add_form.price.errors %}
+                        <p class="text-red-500 text-xs font-light">{{ add_form.price.errors.0 }}</p>
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <label for="{{ add_form.is_available.id_for_label }}" class="text-sm font-light text-sand-100">
+                    Available
+                </label>
+                <label class="relative inline-flex items-center cursor-pointer w-fit">
+                    {{ add_form.is_available }}
+                    <div class="w-11 h-6 bg-sand-100/20 rounded-full peer peer-checked:bg-cyprus-100 peer-checked:[&>span]:translate-x-5 transition-colors">
+                        <span class="block w-5 h-5 bg-sand-100 rounded-full shadow-md translate-x-0.5 translate-y-0.5 transition-transform"></span>
+                    </div>
+                </label>
+                {% if add_form.is_available.errors %}
+                    <p class="text-red-500 text-xs font-light">{{ add_form.is_available.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="w-full bg-sand-100 text-cyprus-700 font-display font-bold rounded-xl py-4 hover:bg-sand-200 transition-colors">
+                Add Price
+            </button>
+        </form>
+    </div>
+
+</div>
 {% endblock content %}

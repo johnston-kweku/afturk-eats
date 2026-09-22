@@ -44,7 +44,7 @@
                                 {{ item.name }}
                             </p>
                         </div>
-                        <div class="flex items-center gap-1">
+                        <div class="flex flex-wrap items-center gap-1">
                             {% for variant in item.variants.all %}
                                 <p class="font-display font-light text-[10px] px-2 py-1 {% if variant.is_available %} bg-sand-100 text-cyprus-700 {% else %} line-through bg-white/10  text-sand-100 {% endif %} backdrop-blur-md shadow-2xl rounded-full shrink-0">
                                     GHS {{ variant.price }}
