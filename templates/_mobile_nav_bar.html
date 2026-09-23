@@ -93,4 +93,26 @@
 </nav>
 
 
+<!-- Mobile app name -->
+<div class="md:hidden w-full fixed top-5 font-display z-50 flex items-center gap-2 justify-between px-3 py-1">
+    <div class="bg-white/10 rounded-full p-2 border-2 border-white/10">
+        <svg class="w-8 h-8 stroke-sand-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+        </svg>
+    </div>
 
+    <div class="flex items-center justify-center gap-0 w-full font-display bg-white/10 backdrop-blur-md px-3 py-1 rounded-full border-2 border-white/10">
+        <p class="text-sand-100 font-bold text-base">afturk</p><span class="text-white/20 font-bold">eats</span><svg class="w-10 h-10 animate-ping" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#f0ede4"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 9.5C13.3807 9.5 14.5 10.6193 14.5 12C14.5 13.3807 13.3807 14.5 12 14.5C10.6193 14.5 9.5 13.3807 9.5 12C9.5 10.6193 10.6193 9.5 12 9.5Z" fill="#004741"></path> </g></svg>
+    </div>
+
+    <div class="bg-white/10 rounded-full p-2 border-2 border-white/10">
+        {% if request.user.profile_picture %}
+            <img src="{{request.user.profile_picture.url}}" class="rounded-full w-full h-full object-cover">
+        {% else %}
+            <svg class="stroke-sand-100 w-8 h-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+            </svg>
+
+        {% endif %}
+    </div>
+</div>  
