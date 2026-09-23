@@ -10,7 +10,7 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from order.models import Category
+from vendor.models import Category
 from rider.models import RiderProfile
 from .decorators import role_required
 from .models import Invitation, User

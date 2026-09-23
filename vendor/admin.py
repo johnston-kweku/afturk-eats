@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import VendorProfile, MenuItem, OpeningHours, MenuItemVariant
+from .models import VendorProfile, MenuItem, OpeningHours, MenuItemVariant, Category
 
 
 # Register your models here.
@@ -33,4 +33,12 @@ class OpeningHoursAdmin(admin.ModelAdmin):
 class MenuItemVariantAdmin(admin.ModelAdmin):
     list_display = [
         'menu_item', 'is_available'
+    ]
+
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = [
+        'name', 'slug'
     ]
