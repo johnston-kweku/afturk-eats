@@ -447,3 +447,10 @@ def update_personal_info(request):
     return render(request, 'accounts/edit_personal_info.html', {
         'form': form,
     })
+
+
+
+
+@login_required
+def user_profile(request):
+    return render(request, 'accounts/user_profile.html')

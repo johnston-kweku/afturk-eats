@@ -8,7 +8,7 @@ from order.models import Order, OrderItem
 
 @role_required(User.Role.CUSTOMER)
 def customer_dashboard(request):
-    menu_items = MenuItem.objects.all().prefetch_related(
+    menu_items = MenuItem.objects.filter(is_available=True, vendor__is_online=True).prefetch_related(
         'variants'
     )
     categories = Category.objects.all()
@@ -16,15 +16,15 @@ def customer_dashboard(request):
         'menu_items': menu_items,
         'categories': categories
     }
-    if request.method == 'POST':
-        items_filter = request.POST.get('filter', '')
-        if not items_filter:
-            error = 'Please provide a filter'
-            context['error'] = error
-            return render(request, 'customer/customer_dashboard', context)
 
-        menu_items = MenuItem.objects.filter(category=items_filter).prefetch_related('variants')
+    items_filter = request.GET.get('category', '')
+
+    if items_filter:
+        menu_items = menu_items.filter(category__name=items_filter)
         context['menu_items'] = menu_items
+        return render(request, 'customer/customer_dashboard.html', context)
+
+    context['menu_items'] = menu_items
     return render(request, 'customer/customer_dashboard.html', context)
 
 

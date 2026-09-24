@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{% static 'src/css/style.css' %}">
     <link rel="shortcut icon" href="{% static 'assets/favicon.png' %}" type="image/x-icon">
 </head>
-<body class="bg-linear-to-b from-cyprus-800 font-sans to-cyprus-600 pt-8 pb-24 flex items-center justify-center min-h-screen">
+<body class="bg-linear-to-b from-cyprus-800 select-none font-sans to-cyprus-600 pt-8 pb-24 flex items-center justify-center min-h-screen">
     {% include '_desktop_nav_bar.html' %}
     {% include '_mobile_nav_bar.html' %}
     {% if request.user.is_authenticated %}
