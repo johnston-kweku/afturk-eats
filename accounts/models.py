@@ -27,6 +27,7 @@ class User(AbstractUser):
     phone_number = models.CharField(max_length=15, unique=True)  # mandatory
     email = models.EmailField(unique=True, null=True, blank=True)  # optional
     public_id = models.CharField(max_length=12, unique=True, editable=False, blank=True)
+    profile_picture = models.ImageField(upload_to='user/profile_pictures', null=True, blank=True)
 
     ROLE_PREFIX = {
         Role.RIDER: "RID",
