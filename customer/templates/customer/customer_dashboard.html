@@ -1,7 +1,91 @@
 {% extends 'base.html' %}
 
-
-
 {% block content %}
-    
+<div class="w-11/12 md:w-9/12 mt-18 flex flex-col items-center pb-12">
+
+    <div class="w-full flex flex-col gap-1 mb-6">
+        <p class="text-sand-100 font-display text-lg">
+            Hey {{ request.user.first_name }} 👋
+        </p>
+        <p class="text-sand-100/40 font-light text-sm">
+            What are you craving today?
+        </p>
+    </div>
+
+    <!-- Category filter -->
+    <div class="w-full flex items-center gap-2 overflow-x-auto pb-2 mb-4">
+        <a href="{% url 'customer:customer_dashboard' %}"
+           class="shrink-0 font-display text-sm px-4 py-2 rounded-full transition-colors {% if not request.GET.category %}bg-sand-100 text-cyprus-700{% else %}bg-white/5 text-sand-100 border border-sand-100/10{% endif %}">
+            All
+        </a>
+        {% for category in categories %}
+            <a href="{% url 'customer:customer_dashboard' %}?category={{ category.name }}"
+               class="shrink-0 font-display text-sm px-4 py-2 rounded-full transition-colors {% if request.GET.category == category.name %}bg-sand-100 text-cyprus-700{% else %}bg-white/5 text-sand-100 border border-sand-100/10{% endif %}">
+                {{ category.name }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <!-- Menu grid -->
+    <div class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for item in menu_items %}
+            <div class="bg-white/5 backdrop-blur-md flex flex-col border border-sand-100/10 rounded-xl overflow-hidden">
+
+                <div class="w-full h-36">
+                    {% if item.image %}
+                        <img src="{{ item.image.url }}" alt="{{ item.name }}" class="object-cover w-full h-full">
+                    {% else %}
+                        <div class="w-full h-full bg-sand-100/10 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-sand-100/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3 6h18a1.5 1.5 0 011.5 1.5v9A1.5 1.5 0 0121 18H3a1.5 1.5 0 01-1.5-1.5v-9A1.5 1.5 0 013 6z" />
+                            </svg>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="flex flex-col gap-2 px-4 py-3">
+                    <p class="text-sand-100 font-display font-bold text-base truncate">
+                        {{ item.name }}
+                    </p>
+                    <p class="text-sand-100/40 font-light text-xs">
+                        {{ item.vendor.business_name }}
+                    </p>
+
+                    <div class="flex items-center gap-1 flex-wrap">
+                        {% for variant in item.variants.all %}
+                            <p class="font-display font-light text-[10px] px-2 py-1 {% if variant.is_available %} bg-sand-100 text-cyprus-700 {% else %} line-through bg-white/10 text-sand-100 {% endif %} backdrop-blur-md shadow-2xl rounded-full shrink-0">
+                                GHS {{ variant.price }}
+                            </p>
+                        {% empty %}
+                            <p class="text-sand-100 font-display font-light text-[10px] px-2 py-1 bg-white/5 backdrop-blur-md shadow-2xl rounded-full shrink-0">
+                                No prices set
+                            </p>
+                        {% endfor %}
+                    </div>
+                    <p class="text-sand-100/40 font-light text-sm line-clamp-2">
+                        {{ item.description }}
+                    </p>
+
+                    <!-- PLACEHOLDER: add-to-cart action once cart logic exists -->
+                    <button disabled class="mt-2 w-full bg-sand-100/20 text-sand-100/50 font-display font-bold rounded-lg py-2 text-sm cursor-not-allowed">
+                        Add to Cart (coming soon)
+                    </button>
+                </div>
+
+            </div>
+        {% empty %}
+            <div class="col-span-full w-full flex flex-col items-center gap-3 py-16 text-center">
+                <p class="text-sand-100 font-display text-lg">Nothing here yet</p>
+                <p class="text-sand-100/40 font-light text-sm max-w-xs">
+                    {% if request.GET.category %}
+                        No available items in "{{ request.GET.category }}" right now.
+                    {% else %}
+                        No vendors are online right now — check back soon.
+                    {% endif %}
+                </p>
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
 {% endblock content %}
