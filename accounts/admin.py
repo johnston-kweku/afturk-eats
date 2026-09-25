@@ -29,6 +29,7 @@ class CustomUserAdmin(UserAdmin):
                 'last_name',
                 'email',
                 'phone_number',
+                'profile_picture'
             ),
         }),
         ('Afturk Eats', {
