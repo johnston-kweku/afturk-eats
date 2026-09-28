@@ -53,7 +53,10 @@
 
                     <div class="flex items-center gap-1 flex-wrap">
                         {% for variant in item.variants.all %}
-                            <p class="font-display font-light text-[10px] px-2 py-1 {% if variant.is_available %} bg-sand-100 text-cyprus-700 {% else %} line-through bg-white/10 text-sand-100 {% endif %} backdrop-blur-md shadow-2xl rounded-full shrink-0">
+                            <p class="font-display flex items-center gap-1 font-light text-[10px] px-2 py-1 {% if variant.is_available %} cursor-pointer bg-sand-100 text-cyprus-700 {% else %} cursor-not-allowed line-through bg-white/10 text-sand-100 {% endif %} backdrop-blur-md shadow-2xl rounded-full shrink-0">
+                                <svg class="w-5 h-5 stroke-cyprus-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
                                 GHS {{ variant.price }}
                             </p>
                         {% empty %}

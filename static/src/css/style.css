@@ -857,6 +857,9 @@
   .fill-cyprus-700 {
     fill: var(--color-cyprus-700);
   }
+  .stroke-cyprus-700 {
+    stroke: var(--color-cyprus-700);
+  }
   .stroke-green-600 {
     stroke: var(--color-green-600);
   }
