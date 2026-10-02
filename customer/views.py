@@ -1,8 +1,9 @@
 from django.shortcuts import render
+from django.contrib import messages
 from accounts.decorators import role_required
 from accounts.models import User
-from vendor.models import Category, VendorProfile, MenuItem, MenuItemVariant
-from order.models import Order, OrderItem
+from vendor.models import Category, MenuItem
+
 
 # Create your views here.
 
@@ -32,3 +33,8 @@ def customer_dashboard(request):
 @role_required(User.Role.CUSTOMER)
 def customer_settings(request):
     return render(request, 'customer/settings.html')
+
+
+@role_required(User.Role.CUSTOMER)
+def customer_cart(request):
+    return render(request, 'customer/cart.html')

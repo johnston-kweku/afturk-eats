@@ -15,7 +15,12 @@
         {% include '_online_status.html' %}
     {% endif %}
 
+    <div id="toast-container" class="fixed top-4 right-4 z-100 flex flex-col gap-2 w-[90%] max-w-sm"></div>
+
+    <script id="django-messages" type="application/json">{{ toast_messages_json|safe }}</script>
+
     <script src="{% static 'src/js/base/base.js' %}"></script>
+    <script src="{% static 'src/js/base/toast.js' %}"></script>
     {% block content %}{% endblock content %}
 </body>
 </html>

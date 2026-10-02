@@ -9,7 +9,6 @@ import random
 
 
 
-
 class Order(models.Model):
     class OrderType(models.TextChoices):
         FOOD = 'FOOD', 'Food'
@@ -36,12 +35,12 @@ class Order(models.Model):
     payment_method = models.CharField(max_length=30, choices=PaymentMethod.choices, default=PaymentMethod.ONLINE)
     delivery_code = models.CharField(max_length=4, blank=True, editable=False)
     order_id = models.CharField(max_length=12, blank=True, editable=False, unique=True)
+    subtotal = models.DecimalField(max_digits=8, decimal_places=2)
+    delivery_fee = models.DecimalField(max_digits=8, decimal_places=2)
+    processing_fee = models.DecimalField(max_digits=8, decimal_places=2)
     total_amount = models.DecimalField(max_digits=8, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    delivery_fee = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
-
-
 
     def __str__(self):
         return f'{self.customer.user.first_name} - {self.order_id}'
