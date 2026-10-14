@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 <div class="w-11/12 md:w-9/12 mt-18 flex flex-col items-center pb-12">
 
@@ -53,14 +53,23 @@
 
                     <div class="flex items-center gap-1 flex-wrap">
                         {% for variant in item.variants.all %}
-                            <p class="font-display flex items-center gap-1 font-light text-[10px] px-2 py-1 {% if variant.is_available %} cursor-pointer bg-sand-100 text-cyprus-700 {% else %} cursor-not-allowed line-through bg-white/10 text-sand-100 {% endif %} backdrop-blur-md shadow-2xl rounded-full shrink-0">
-                                <svg class="w-5 h-5 stroke-cyprus-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                </svg>
-                                GHS {{ variant.price }}
-                            </p>
+                            {% if variant.is_available %}
+                                <button type="button"
+                                    class="variant-pill font-display font-light text-[10px] px-2 py-1 bg-sand-100 text-cyprus-700 shadow-2xl rounded-full shrink-0 active:scale-95 transition-transform cursor-pointer"
+                                    data-add-url="{% url 'order:add_to_cart' variant.id %}"
+                                    data-item-name="{{ item.name }}"
+                                    data-vendor-name="{{ item.vendor.business_name }}"
+                                    data-label="{{ variant.label }}"
+                                    data-price="{{ variant.price }}">
+                                    {{ variant.label }} · GHS {{ variant.price }}
+                                </button>
+                            {% else %}
+                                <p class="font-display font-light text-[10px] px-2 py-1 line-through bg-white/10 text-sand-100 rounded-full shrink-0">
+                                    {{ variant.label }} · GHS {{ variant.price }}
+                                </p>
+                            {% endif %}
                         {% empty %}
-                            <p class="text-sand-100 font-display font-light text-[10px] px-2 py-1 bg-white/5 backdrop-blur-md shadow-2xl rounded-full shrink-0">
+                            <p class="text-sand-100 font-display font-light text-[10px] px-2 py-1 bg-white/5 rounded-full shrink-0">
                                 No prices set
                             </p>
                         {% endfor %}
@@ -69,10 +78,6 @@
                         {{ item.description }}
                     </p>
 
-                    <!-- PLACEHOLDER: add-to-cart action once cart logic exists -->
-                    <button disabled class="mt-2 w-full bg-sand-100/20 text-sand-100/50 font-display font-bold rounded-lg py-2 text-sm cursor-not-allowed">
-                        Add to Cart (coming soon)
-                    </button>
                 </div>
 
             </div>
@@ -91,4 +96,38 @@
     </div>
 
 </div>
+<!-- Add to cart popup -->
+<div id="cart-popup" class="hidden fixed inset-0 z-[90] items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    {% csrf_token %}
+    <div class="w-full max-w-sm bg-cyprus-700/95 border border-sand-100/20 rounded-2xl p-5 flex flex-col gap-4">
+        <div class="flex items-start justify-between gap-3">
+            <div class="flex flex-col min-w-0">
+                <p id="popup-item-name" class="text-sand-100 font-display font-bold text-lg truncate"></p>
+                <p id="popup-vendor-name" class="text-sand-100/40 font-light text-xs"></p>
+                <p id="popup-variant" class="text-sand-100 font-light text-sm mt-1"></p>
+            </div>
+            <button type="button" id="popup-close" class="text-sand-100/60 hover:text-sand-100 text-xl leading-none">&times;</button>
+        </div>
+
+        <div class="flex items-center justify-between">
+            <p class="text-sand-100/60 text-sm font-light">Quantity</p>
+            <div class="flex items-center gap-3">
+                <button type="button" id="qty-minus" class="w-9 h-9 rounded-full bg-sand-100/10 text-sand-100 text-lg">−</button>
+                <span id="qty-value" class="text-sand-100 font-display font-bold w-6 text-center">1</span>
+                <button type="button" id="qty-plus" class="w-9 h-9 rounded-full bg-sand-100/10 text-sand-100 text-lg">+</button>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+            <p class="text-sand-100/60 text-sm font-light">Total</p>
+            <p id="popup-total" class="text-sand-100 font-display font-bold"></p>
+        </div>
+
+        <button type="button" id="popup-add" class="w-full bg-sand-100 text-cyprus-700 font-display font-bold rounded-xl py-3 hover:bg-sand-200 transition-colors disabled:opacity-50">
+            Add to Cart
+        </button>
+    </div>
+</div>
+
+<script src="{% static 'src/js/customer/customer_dashboard.js' %}"></script>
 {% endblock content %}

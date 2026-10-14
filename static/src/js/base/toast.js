@@ -49,3 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const toastManager = new ToastManager('toast-container');
     toastManager.loadFromDjangoMessages();
 });
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    window.toastManager = new ToastManager('toast-container');
+    window.toastManager.loadFromDjangoMessages();
+});

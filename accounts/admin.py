@@ -14,6 +14,11 @@ class CustomUserAdmin(UserAdmin):
         'public_id',
         'phone_number',
         'email',
+        'is_active'
+    ]
+
+    list_editable = [
+        'is_active'
     ]
 
     fieldsets = (
@@ -29,7 +34,6 @@ class CustomUserAdmin(UserAdmin):
                 'last_name',
                 'email',
                 'phone_number',
-                'profile_picture'
             ),
         }),
         ('Afturk Eats', {
