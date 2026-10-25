@@ -6,5 +6,4 @@ app_name = 'customer'
 urlpatterns = [
     path('dashboard/', views.customer_dashboard, name='customer_dashboard'),
     path('settings/', views.customer_settings, name='settings'),
-    path('cart/', views.customer_cart, name='cart')
 ]

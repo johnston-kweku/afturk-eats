@@ -8,6 +8,7 @@
       "Courier New", monospace;
     --color-red-50: oklch(97.1% 0.013 17.38);
     --color-red-200: oklch(88.5% 0.062 18.334);
+    --color-red-300: oklch(80.8% 0.114 19.571);
     --color-red-400: oklch(70.4% 0.191 22.216);
     --color-red-500: oklch(63.7% 0.237 25.331);
     --color-red-600: oklch(57.7% 0.245 27.325);
@@ -429,6 +430,9 @@
   .h-6 {
     height: calc(var(--spacing) * 6);
   }
+  .h-7 {
+    height: calc(var(--spacing) * 7);
+  }
   .h-8 {
     height: calc(var(--spacing) * 8);
   }
@@ -473,6 +477,9 @@
   }
   .w-6 {
     width: calc(var(--spacing) * 6);
+  }
+  .w-7 {
+    width: calc(var(--spacing) * 7);
   }
   .w-8 {
     width: calc(var(--spacing) * 8);
@@ -643,6 +650,12 @@
     border-top-width: calc(1px * var(--tw-divide-y-reverse));
     border-bottom-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
   }
+  :where(.divide-sand-100\/10 > :not(:last-child)) {
+    border-color: color-mix(in srgb, #f0ede4 10%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-sand-100) 10%, transparent);
+    }
+  }
   :where(.divide-sand-100\/15 > :not(:last-child)) {
     border-color: color-mix(in srgb, #f0ede4 15%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -693,6 +706,14 @@
   .border-2 {
     border-style: var(--tw-border-style);
     border-width: 2px;
+  }
+  .border-t {
+    border-top-style: var(--tw-border-style);
+    border-top-width: 1px;
+  }
+  .border-b {
+    border-bottom-style: var(--tw-border-style);
+    border-bottom-width: 1px;
   }
   .border-dashed {
     --tw-border-style: dashed;
@@ -924,9 +945,6 @@
   .fill-cyprus-700 {
     fill: var(--color-cyprus-700);
   }
-  .stroke-cyprus-700 {
-    stroke: var(--color-cyprus-700);
-  }
   .stroke-green-600 {
     stroke: var(--color-green-600);
   }
@@ -971,6 +989,9 @@
   }
   .px-4 {
     padding-inline: calc(var(--spacing) * 4);
+  }
+  .px-5 {
+    padding-inline: calc(var(--spacing) * 5);
   }
   .px-6 {
     padding-inline: calc(var(--spacing) * 6);
@@ -1141,6 +1162,9 @@
   }
   .text-green-400 {
     color: var(--color-green-400);
+  }
+  .text-red-400 {
+    color: var(--color-red-400);
   }
   .text-red-500 {
     color: var(--color-red-500);
@@ -1364,6 +1388,9 @@
     }
     .hover\:text-cyprus-700:hover {
       color: var(--color-cyprus-700);
+    }
+    .hover\:text-red-300:hover {
+      color: var(--color-red-300);
     }
     .hover\:text-sand-100:hover {
       color: var(--color-sand-100);

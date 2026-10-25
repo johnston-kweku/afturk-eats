@@ -5,53 +5,52 @@ class Cart:
     def __init__(self, request, vendor_id):
         self.session = request.session
         self.vendor_id = str(vendor_id)
+        self.carts = self.session.setdefault('carts', {})
+        self.cart = self.carts.get(self.vendor_id, {})
 
-        carts = self.session.get('carts')
-        if carts is None:
-            carts = self.session['carts'] = {}
-
-        cart = carts.get(self.vendor_id)
-        if cart is None:
-            cart = carts[self.vendor_id] = {}
-
-        self.carts = carts
-        self.cart = cart
+    @staticmethod
+    def vendor_ids(request):
+        return list(request.session.get('carts', {}).keys())
 
     def add(self, variant_id, quantity=1):
         variant_id = str(variant_id)
-        current_quantity = self.cart.get(variant_id, 0)
-        self.cart[variant_id] = current_quantity + quantity
-        self.save()
+        self.cart[variant_id] = self.cart.get(variant_id, 0) + quantity
+        self._save()
 
     def remove(self, variant_id):
-        variant_id = str(variant_id)
-        if variant_id in self.cart:
-            del self.cart[variant_id]
-            self.save()
+        self.cart.pop(str(variant_id), None)
+        self._save()
 
     def update_quantity(self, variant_id, quantity):
         variant_id = str(variant_id)
-        if quantity <= 0:
-            self.remove(variant_id)
+        if variant_id not in self.cart:
             return
-        self.cart[variant_id] = quantity
-        self.save()
+        if quantity <= 0:
+            self.cart.pop(variant_id)
+        else:
+            self.cart[variant_id] = quantity
+        self._save()
 
     def clear(self):
-        if self.vendor_id in self.carts:
-            del self.carts[self.vendor_id]
-            self.save()
+        self.cart.clear()
+        self._save()
 
-    def save(self):
+    def _save(self):
+        if self.cart:
+            self.carts[self.vendor_id] = self.cart
+        else:
+            self.carts.pop(self.vendor_id, None)
         self.session.modified = True
 
     def __len__(self):
         return sum(self.cart.values())
 
     def __iter__(self):
-        variant_ids = self.cart.keys()
-        variants = MenuItemVariant.objects.filter(id__in=variant_ids).select_related('menu_item', 'menu_item__vendor')
-
+        variants = (
+            MenuItemVariant.objects
+            .filter(id__in=self.cart.keys())
+            .select_related('menu_item', 'menu_item__vendor')
+        )
         for variant in variants:
             quantity = self.cart[str(variant.id)]
             yield {

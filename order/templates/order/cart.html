@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="w-11/12 md:w-6/12 mt-18 flex flex-col items-center pb-12 gap-6">
+
+    <div class="w-full flex flex-col gap-1">
+        <p class="text-sand-100 font-display text-lg">Your carts</p>
+        <p class="text-sand-100/40 font-light text-sm">Each vendor has its own cart and checks out separately.</p>
+    </div>
+
+    {% for cart in carts %}
+        <div class="w-full bg-white/5 backdrop-blur-md border border-sand-100/10 rounded-2xl overflow-hidden">
+
+            <div class="flex items-center justify-between px-5 py-4 border-b border-sand-100/10">
+                <div class="flex flex-col min-w-0">
+                    <p class="text-sand-100 font-display font-bold truncate">{{ cart.vendor.business_name }}</p>
+                    <p class="text-sand-100/40 font-light text-xs">{{ cart.item_count }} item{{ cart.item_count|pluralize }}</p>
+                </div>
+                <form method="post" action="{% url 'order:clear_cart' cart.vendor.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="text-xs text-sand-100/60 hover:text-sand-100 transition-colors">Clear cart</button>
+                </form>
+            </div>
+
+            <div class="flex flex-col divide-y divide-sand-100/10">
+                {% for entry in cart.entries %}
+                    <div class="flex items-center gap-3 px-5 py-4">
+
+                        <div class="w-14 h-14 rounded-lg overflow-hidden shrink-0 bg-sand-100/10">
+                            {% if entry.variant.menu_item.image %}
+                                <img src="{{ entry.variant.menu_item.image.url }}" alt="{{ entry.variant.menu_item.name }}" class="object-cover w-full h-full">
+                            {% endif %}
+                        </div>
+
+                        <div class="flex-1 min-w-0 flex flex-col gap-1">
+                            <p class="text-sand-100 font-display text-sm font-bold truncate">{{ entry.variant.menu_item.name }}</p>
+                            <p class="text-sand-100/40 font-light text-xs">{{ entry.variant.label }} · GHS {{ entry.variant.price }}</p>
+
+                            {% if not entry.variant.is_available or not entry.variant.menu_item.is_available %}
+                                <p class="text-red-400 text-xs font-light">No longer available</p>
+                            {% endif %}
+
+                            <div class="flex items-center gap-2 mt-1">
+                                <form method="post" action="{% url 'order:update_cart_item' cart.vendor.id entry.variant.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantity" value="{{ entry.quantity|add:'-1' }}">
+                                    <button type="submit" class="w-7 h-7 rounded-full bg-sand-100/10 text-sand-100">−</button>
+                                </form>
+                                <span class="text-sand-100 font-display text-sm w-5 text-center">{{ entry.quantity }}</span>
+                                <form method="post" action="{% url 'order:update_cart_item' cart.vendor.id entry.variant.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantity" value="{{ entry.quantity|add:'1' }}">
+                                    <button type="submit" class="w-7 h-7 rounded-full bg-sand-100/10 text-sand-100">+</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col items-end gap-2 shrink-0">
+                            <p class="text-sand-100 font-display font-bold text-sm">GHS {{ entry.line_total }}</p>
+                            <form method="post" action="{% url 'order:remove_cart_item' cart.vendor.id entry.variant.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="text-xs text-red-400 hover:text-red-300">Remove</button>
+                            </form>
+                        </div>
+
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="px-5 py-4 border-t border-sand-100/10 flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                    <p class="text-sand-100/60 text-sm font-light">Subtotal</p>
+                    <p class="text-sand-100 font-display font-bold">GHS {{ cart.subtotal }}</p>
+                </div>
+                <p class="text-sand-100/40 font-light text-xs">Delivery and processing fees are added at checkout.</p>
+
+                {% if not cart.orderable %}
+                    <p class="text-red-400 text-xs font-light">
+                        {% if not cart.vendor.is_online %}This vendor is offline right now.{% else %}Some items are no longer available. Remove them to continue.{% endif %}
+                    </p>
+                {% endif %}
+
+                <!-- PLACEHOLDER: becomes a link to order:checkout once checkout exists -->
+                <button disabled class="w-full bg-sand-100/20 text-sand-100/50 font-display font-bold rounded-xl py-3 cursor-not-allowed">
+                    Checkout
+                </button>
+            </div>
+
+        </div>
+    {% empty %}
+        <div class="w-full flex flex-col items-center gap-3 py-16 text-center">
+            <p class="text-sand-100 font-display text-lg">Your cart is empty</p>
+            <p class="text-sand-100/40 font-light text-sm max-w-xs">Tap a price on any dish to add it.</p>
+            <a href="{% url 'customer:customer_dashboard' %}" class="mt-2 bg-sand-100 text-cyprus-700 font-display font-bold rounded-xl px-5 py-3 text-sm">Browse food</a>
+        </div>
+    {% endfor %}
+
+</div>
+{% endblock content %}

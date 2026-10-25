@@ -34,7 +34,3 @@ def customer_dashboard(request):
 def customer_settings(request):
     return render(request, 'customer/settings.html')
 
-
-@role_required(User.Role.CUSTOMER)
-def customer_cart(request):
-    return render(request, 'customer/cart.html')
