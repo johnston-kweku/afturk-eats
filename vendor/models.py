@@ -28,6 +28,10 @@ class VendorProfile(models.Model):
     category = models.ManyToManyField(Category, related_name='vendor')
     is_online = models.BooleanField(default=False)
     last_seen_at = models.DateTimeField(null=True, blank=True)
+    # created_at and updated_at fields for ordering applications
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.user.first_name

@@ -31,5 +31,9 @@ class RiderProfile(models.Model):
     is_online = models.BooleanField(default=False)
     last_seen_at = models.DateTimeField(null=True, blank=True)
 
+    # created_at and updated_at fields for smooth ordering
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     def __str__(self):
         return self.user.first_name
